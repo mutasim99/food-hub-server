@@ -103,6 +103,10 @@ model User {
   Order           Order[]
   Review          Review[]
 
+  role   String? @default("CUSTOMER")
+  phone  Int?
+  status String? @default("ACTIVE")
+
   @@unique([email])
   @@map("user")
 }
