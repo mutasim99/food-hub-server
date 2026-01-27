@@ -14,4 +14,10 @@ router.post(
 /* Add a Meal */
 router.post("/meals", auth(UserRole.PROVIDER), providerController.addMeal);
 
+/* Update Meal */
+router.put(
+  "/meals/:id",
+  auth(UserRole.PROVIDER),
+  providerController.UpdateMeal
+);
 export const providerRouter = router;

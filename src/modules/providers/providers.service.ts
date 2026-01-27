@@ -1,4 +1,13 @@
+import { Meal } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+
+const getProviderByUserId = async (userId: string) => {
+  return prisma.providerProfile.findUnique({
+    where: {
+      userId: userId,
+    },
+  });
+};
 
 const createProfile = async (userId: string, data: any) => {
   return prisma.providerProfile.create({
@@ -6,13 +15,45 @@ const createProfile = async (userId: string, data: any) => {
   });
 };
 
-const addMeal = async (providerId: string, data: any) => {
+const addMeal = async (data: Meal, userId: string) => {
+  const provider = await getProviderByUserId(userId);
+  if (!provider) {
+    throw new Error("Provider profile not found");
+  }
   return prisma.meal.create({
-    data: { ...data, providerId },
+    data: { ...data, providerId: provider.id },
+  });
+};
+
+const updateMeal = async (mealId: string, userId: string, data: Meal) => {
+  const provider = await getProviderByUserId(userId);
+  if (!provider) {
+    throw new Error("Provider profile not found");
+  };
+
+  const meal = await prisma.meal.findUnique({
+    where: {
+      id: mealId,
+    },
+  });
+
+  if (!meal) {
+    throw new Error("Meal not found");
+  }
+
+  if (meal.providerId !== provider.id) {
+    throw new Error("You are not able to update this meal");
+  }
+  return await prisma.meal.update({
+    where: {
+      id: mealId,
+    },
+    data,
   });
 };
 
 export const providerServices = {
   createProfile,
   addMeal,
+  updateMeal,
 };
