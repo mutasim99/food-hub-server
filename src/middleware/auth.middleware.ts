@@ -51,7 +51,7 @@ const auth = (...roles: UserRole[]) => {
         emailVerified: session.user.emailVerified,
       };
 
-      if (roles.length && !session.user.role) {
+      if (roles.length && !roles.includes(session.user.role as UserRole )) {
         return res.status(403).json({
           success: false,
           message: "Forbidden!, you can not access this",
