@@ -5,9 +5,17 @@ import { providerController } from "./providers.controller";
 const router = Router();
 
 /* Get all provider */
-router.get("/api/providers", providerController.getAllProviders);
+router.get(
+  "/api/providers",
+  auth(UserRole.ADMIN),
+  providerController.getAllProviders
+);
 /* Get all provider orders */
-router.get('/order', auth(UserRole.PROVIDER), providerController.getProviderOrders)
+router.get(
+  "/order",
+  auth(UserRole.PROVIDER),
+  providerController.getProviderOrders
+);
 /* Create provider profile */
 router.post(
   "/profile",
