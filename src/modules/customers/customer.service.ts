@@ -37,22 +37,26 @@ const createOrder = async (
     }
     total += meal.price * item.qty;
   }
-  return await prisma.order.create({
-    data: {
-      customerId: userId,
-      address,
-      total,
-      items: {
-        create: items.map((item) => ({
-          mealId: item.mealId,
-          qty: item.qty,
-        })),
+  const order = await prisma.$transaction(async (tx) => {
+    const createOrder = await tx.order.create({
+      data: {
+        customerId: userId,
+        address,
+        total,
       },
-    },
-    include: {
-      items: true,
-    },
+    });
+    const orderItemsData = items.map((item) => ({
+      orderId: createOrder.id,
+      mealId: item.mealId,
+      qty: item.qty,
+    }));
+
+    await tx.orderItem.createMany({
+      data: orderItemsData,
+    });
+    return createOrder;
   });
+  return order;
 };
 
 const getMyOrder = async (userId: string) => {
@@ -74,5 +78,5 @@ export const customerServices = {
   getMeals,
   getMealById,
   createOrder,
-  getMyOrder
+  getMyOrder,
 };
