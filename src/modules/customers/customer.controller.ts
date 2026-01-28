@@ -59,8 +59,27 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
+const getMyOrder = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id as string;
+    const result = await customerServices.getMyOrder(userId);
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error,
+    });
+  }
+};
+
 export const customerController = {
   getMeals,
   getMealById,
-  createOrder
+  createOrder,
+  getMyOrder,
 };

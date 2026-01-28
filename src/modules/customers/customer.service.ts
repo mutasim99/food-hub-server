@@ -55,8 +55,24 @@ const createOrder = async (
   });
 };
 
+const getMyOrder = async (userId: string) => {
+  return prisma.order.findMany({
+    where: {
+      customerId: userId,
+    },
+    include: {
+      items: {
+        include: {
+          meal: true,
+        },
+      },
+    },
+  });
+};
+
 export const customerServices = {
   getMeals,
   getMealById,
-  createOrder
+  createOrder,
+  getMyOrder
 };
