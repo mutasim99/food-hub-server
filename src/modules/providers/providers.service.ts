@@ -161,6 +161,8 @@ const updateOrderStatus = async (
   });
 };
 
+
+
 export const providerServices = {
   getAllProviders,
   createProfile,
@@ -169,4 +171,5 @@ export const providerServices = {
   deleteMeal,
   getProviderOrders,
   updateOrderStatus,
+  
 };

@@ -74,9 +74,64 @@ const getMyOrder = async (userId: string) => {
   });
 };
 
+const createReview = async (
+  userId: string,
+  mealId: string,
+  rating: number,
+  comment: string
+) => {
+  const hasOrder = await prisma.order.findFirst({
+    where: {
+      customerId: userId,
+      items: {
+        some: {
+          mealId,
+        },
+      },
+    },
+  });
+
+  if (!hasOrder) {
+    throw new Error("You must order the meal before reviewing");
+  }
+
+  return prisma.review.create({
+    data: {
+      userId,
+      mealId,
+      rating,
+      comment,
+    },
+  });
+};
+
+const getOrderById = async (orderId: string, userId: string) => {
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      customerId: userId,
+    },
+    include: {
+      items: {
+        include: {
+          meal: true,
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  return order;
+};
+
 export const customerServices = {
   getMeals,
   getMealById,
   createOrder,
   getMyOrder,
+  createReview,
+  getOrderById,
 };

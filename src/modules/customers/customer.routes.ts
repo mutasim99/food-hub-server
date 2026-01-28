@@ -8,13 +8,26 @@ const router = Router();
 
 /* Get all meals */
 router.get("/meals", customerController.getMeals);
-/* Get meal by id */
-router.get("/meals/:id", customerController.getMealById);
 
 //? Customers only
 /* Create order */
-router.post("/orders", auth(UserRole.CUSTOMER), customerController.createOrder);
+router.post("/order", auth(UserRole.CUSTOMER), customerController.createOrder);
 /* Get Own order */
-router.get('/order', auth(UserRole.CUSTOMER), customerController.getMyOrder)
+router.get("/order", auth(UserRole.CUSTOMER), customerController.getMyOrder);
+/* Create review */
+router.post(
+  "/reviews",
+  auth(UserRole.CUSTOMER),
+  customerController.createReview
+);
+
+/* Get order details */
+router.get(
+  "/order/:id",
+  auth(UserRole.CUSTOMER),
+  customerController.getOrderById
+);
+/* Get meal by id */
+router.get("/meals/:id", customerController.getMealById);
 
 export const customerRouter = router;

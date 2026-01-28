@@ -77,9 +77,56 @@ const getMyOrder = async (req: Request, res: Response) => {
   }
 };
 
+const createReview = async (req: Request, res: Response) => {
+  try {
+    const { mealId, rating, comment } = req.body;
+    const userId = req.user?.id as string;
+    const result = customerServices.createReview(
+      userId,
+      mealId,
+      rating,
+      comment
+    );
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error,
+    });
+  }
+};
+
+const getOrderById = async (req: Request, res: Response) => {
+  try {
+    const orderId = req.params.id as string;
+    const userId = req.user?.id as string;
+
+    const result = await customerServices.getOrderById(orderId, userId);
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error,
+    });
+  }
+  }
+
+
 export const customerController = {
   getMeals,
   getMealById,
   createOrder,
   getMyOrder,
+  createReview,
+  getOrderById
 };
