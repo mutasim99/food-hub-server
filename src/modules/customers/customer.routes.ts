@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { customerController } from "./customer.controller";
+import auth, { UserRole } from "../../middleware/auth.middleware";
 
 const router = Router();
 
@@ -7,6 +8,10 @@ const router = Router();
 
 /* Get all meals */
 router.get("/meals", customerController.getMeals);
+/* Get meal by id */
+router.get("/meals/:id", customerController.getMealById);
 
-export const customerRouter = router
+//? Customers only
+router.post("/order", auth(UserRole.CUSTOMER), customerController.createOrder);
 
+export const customerRouter = router;

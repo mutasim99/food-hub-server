@@ -48,7 +48,7 @@ model Meal {
   provider    ProviderProfile @relation(fields: [providerId], references: [id])
   createdAt   DateTime        @default(now())
   OrderItem   OrderItem[]
-  Review      Review[]
+  review      Review[]
 }
 
 model Order {
