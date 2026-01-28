@@ -1,4 +1,4 @@
-import { Meal } from "../../../generated/prisma/client";
+import { Meal, OrderStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const getAllProviders = async () => {
@@ -99,6 +99,12 @@ const getProviderOrders = async (userId: string) => {
       },
     },
     include: {
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
       items: {
         include: {
           meal: true,
@@ -108,11 +114,59 @@ const getProviderOrders = async (userId: string) => {
   });
 };
 
+const updateOrderStatus = async (
+  orderId: string,
+  userId: string,
+  status: OrderStatus
+) => {
+  const provider = await getProviderByUserId(userId);
+  if (!provider) {
+    throw new Error("Provider profile is not found");
+  }
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: {
+        some: {
+          meal: {
+            providerId: provider.id,
+          },
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found or not authorized");
+  }
+
+  /* Status update */
+  const allowed: Record<string, string[]> = {
+    PLACED: ["PLACED"],
+    PREPARING: ["PREPARING"],
+    READY: ["READY"],
+    DELIVERED: ["DELIVERED"],
+    CANCELLED: ["CANCELLED"],
+  };
+
+  if (!allowed[order.status]?.includes(status)) {
+    throw new Error("Invalid order status transition");
+  }
+
+  return prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: { status },
+  });
+};
+
 export const providerServices = {
   getAllProviders,
   createProfile,
   addMeal,
   updateMeal,
   deleteMeal,
-  getProviderOrders
+  getProviderOrders,
+  updateOrderStatus,
 };

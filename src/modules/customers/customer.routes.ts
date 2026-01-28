@@ -15,6 +15,6 @@ router.get("/meals/:id", customerController.getMealById);
 /* Create order */
 router.post("/orders", auth(UserRole.CUSTOMER), customerController.createOrder);
 /* Get Own order */
-router.get('/orders', auth(UserRole.CUSTOMER), customerController.getMyOrder)
+router.get('/order', auth(UserRole.CUSTOMER), customerController.getMyOrder)
 
 export const customerRouter = router;

@@ -12,7 +12,7 @@ router.get(
 );
 /* Get all provider orders */
 router.get(
-  "/order",
+  "/orders",
   auth(UserRole.PROVIDER),
   providerController.getProviderOrders
 );
@@ -31,6 +31,12 @@ router.put(
   "/api/meals/:id",
   auth(UserRole.PROVIDER),
   providerController.UpdateMeal
+);
+/* Update order Status */
+router.patch(
+  "/orders/:id/status",
+  auth(UserRole.PROVIDER),
+  providerController.updateOrderStatus
 );
 
 /* Delete Meal */
