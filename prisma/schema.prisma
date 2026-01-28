@@ -37,6 +37,11 @@ model ProviderProfile {
   Meal     Meal[]
 }
 
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+  Meal Meal[]
+}
 
 model Meal {
   id          String          @id @default(uuid())
@@ -46,6 +51,8 @@ model Meal {
   image       String?
   providerId  String
   provider    ProviderProfile @relation(fields: [providerId], references: [id])
+  categoryId  String
+  category    Category        @relation(fields: [categoryId], references: [id])
   createdAt   DateTime        @default(now())
   OrderItem   OrderItem[]
   review      Review[]
