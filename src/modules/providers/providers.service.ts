@@ -1,16 +1,16 @@
 import { Meal, OrderStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
-const getAllProviders = async () => {
-  return prisma.providerProfile.findMany();
-};
-
 const getProviderByUserId = async (userId: string) => {
   return prisma.providerProfile.findUnique({
     where: {
       userId: userId,
     },
   });
+};
+
+const getAllProviders = async () => {
+  return prisma.providerProfile.findMany();
 };
 
 const createProfile = async (userId: string, data: any) => {
@@ -20,7 +20,7 @@ const createProfile = async (userId: string, data: any) => {
     },
   });
   if (existingProfile) {
-    throw new Error('Provider Profile i already exists')
+    throw new Error("Provider Profile i already exists");
   }
   return prisma.providerProfile.create({
     data: { ...data, userId },

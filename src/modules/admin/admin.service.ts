@@ -43,9 +43,29 @@ const createCategory = async (name: string) => {
   });
 };
 
+const getAllCategories = async () => {
+  return await prisma.category.findMany();
+};
+
+/* Orders */
+
+const getAllOrders = async () => {
+  return prisma.order.findMany({
+    include: {
+      customer: true,
+      items: {
+        include: {
+          meal: true,
+        },
+      },
+    },
+  });
+};
 
 export const adminServices = {
   getAllUsers,
   updateUser,
   createCategory,
+  getAllCategories,
+  getAllOrders,
 };

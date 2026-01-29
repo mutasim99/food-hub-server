@@ -19,7 +19,7 @@ router.get(
 /* Create provider profile */
 router.post(
   "/profile",
-  auth(UserRole.PROVIDER),
+  auth(UserRole.CUSTOMER),
   providerController.createProfile
 );
 

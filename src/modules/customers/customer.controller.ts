@@ -10,10 +10,11 @@ const getMeals = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong!",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -28,10 +29,11 @@ const getMealById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -51,10 +53,12 @@ const createOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Order failed";
     res.status(500).json({
       success: false,
       message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -69,10 +73,11 @@ const getMyOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -93,10 +98,11 @@ const createReview = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -113,14 +119,14 @@ const getOrderById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
-  }
-
+};
 
 export const customerController = {
   getMeals,
@@ -128,5 +134,5 @@ export const customerController = {
   createOrder,
   getMyOrder,
   createReview,
-  getOrderById
+  getOrderById,
 };

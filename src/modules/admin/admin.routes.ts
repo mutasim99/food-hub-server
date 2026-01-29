@@ -12,6 +12,14 @@ router.post(
   auth(UserRole.ADMIN),
   adminController.createCategory
 );
+router.get(
+  "/categories",
+  auth(UserRole.ADMIN),
+  adminController.getAllCategories
+);
+
+/* orders */
+router.get("/admin-order", auth(UserRole.ADMIN), adminController.getAllOrders);
 
 /* Update user */
 router.patch("/users/:id", auth(UserRole.ADMIN), adminController.updateUser);

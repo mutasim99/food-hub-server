@@ -12,10 +12,11 @@ const getAllUsers = async (req: Request, res: Response) => {
       data: users,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -31,10 +32,11 @@ const updateUser = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
     });
   }
 };
@@ -50,10 +52,48 @@ const createCategory = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
     res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: error,
+      error: errorMessage,
+    });
+  }
+};
+
+const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const result = await adminServices.getAllCategories();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved all categories",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
+
+/* Orders */
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const result = await adminServices.getAllOrders();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved all Orders",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
     });
   }
 };
@@ -62,4 +102,6 @@ export const adminController = {
   getAllUsers,
   updateUser,
   createCategory,
+  getAllCategories,
+  getAllOrders,
 };
