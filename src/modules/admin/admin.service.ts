@@ -1,7 +1,6 @@
 //* Users
 
 import { prisma } from "../../lib/prisma";
-import { UserRole } from "../../type/UserRole";
 
 const getAllUsers = async () => {
   return prisma.user.findMany({
@@ -29,7 +28,24 @@ const updateUser = async (
   });
 };
 
+/* Categories */
+const createCategory = async (name: string) => {
+  const isExists = await prisma.category.findUnique({
+    where: { name },
+  });
+  if (isExists) {
+    throw new Error("Category already exists");
+  }
+  return await prisma.category.create({
+    data: {
+      name,
+    },
+  });
+};
+
+
 export const adminServices = {
   getAllUsers,
   updateUser,
+  createCategory,
 };

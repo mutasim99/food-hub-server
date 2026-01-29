@@ -6,6 +6,12 @@ const router = Router();
 
 /* Users */
 router.get("/users", auth(UserRole.ADMIN), adminController.getAllUsers);
+/* Categories */
+router.post(
+  "/categories",
+  auth(UserRole.ADMIN),
+  adminController.createCategory
+);
 
 /* Update user */
 router.patch("/users/:id", auth(UserRole.ADMIN), adminController.updateUser);
