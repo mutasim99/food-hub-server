@@ -22,9 +22,23 @@ const createProfile = async (userId: string, data: any) => {
   if (existingProfile) {
     throw new Error("Provider Profile i already exists");
   }
-  return prisma.providerProfile.create({
-    data: { ...data, userId },
+
+  const providerProfile = await prisma.providerProfile.create({
+    data: {
+      ...data,
+      userId,
+    },
   });
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      role: "PROVIDER",
+    },
+  });
+  return providerProfile;
 };
 
 const addMeal = async (data: Meal, userId: string) => {
