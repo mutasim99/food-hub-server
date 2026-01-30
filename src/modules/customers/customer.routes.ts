@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { customerController } from "./customer.controller";
 import auth, { UserRole } from "../../middleware/auth.middleware";
+import { providerController } from "../providers/providers.controller";
 
 const router = Router();
 
@@ -19,6 +20,13 @@ router.post(
   "/reviews",
   auth(UserRole.CUSTOMER),
   customerController.createReview
+);
+
+/* Create provider profile */
+router.post(
+  "/profile",
+  auth(UserRole.CUSTOMER),
+  customerController.createProfile
 );
 
 /* Get order details */

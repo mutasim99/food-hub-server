@@ -9,37 +9,7 @@ const getProviderByUserId = async (userId: string) => {
   });
 };
 
-const getAllProviders = async () => {
-  return prisma.providerProfile.findMany();
-};
 
-const createProfile = async (userId: string, data: any) => {
-  const existingProfile = await prisma.providerProfile.findUnique({
-    where: {
-      userId,
-    },
-  });
-  if (existingProfile) {
-    throw new Error("Provider Profile i already exists");
-  }
-
-  const providerProfile = await prisma.providerProfile.create({
-    data: {
-      ...data,
-      userId,
-    },
-  });
-
-  await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      role: "PROVIDER",
-    },
-  });
-  return providerProfile;
-};
 
 const addMeal = async (data: Meal, userId: string) => {
   const provider = await getProviderByUserId(userId);
@@ -184,8 +154,6 @@ const updateOrderStatus = async (
 };
 
 export const providerServices = {
-  getAllProviders,
-  createProfile,
   addMeal,
   updateMeal,
   deleteMeal,

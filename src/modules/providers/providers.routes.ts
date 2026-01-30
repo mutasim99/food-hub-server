@@ -4,23 +4,12 @@ import { providerController } from "./providers.controller";
 
 const router = Router();
 
-/* Get all provider */
-router.get(
-  "/api/providers",
-  auth(UserRole.ADMIN),
-  providerController.getAllProviders
-);
+
 /* Get all provider orders */
 router.get(
   "/orders",
   auth(UserRole.PROVIDER),
   providerController.getProviderOrders
-);
-/* Create provider profile */
-router.post(
-  "/profile",
-  auth(UserRole.CUSTOMER),
-  providerController.createProfile
 );
 
 /* Add a Meal */

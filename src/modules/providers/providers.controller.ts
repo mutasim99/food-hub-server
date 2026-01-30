@@ -2,43 +2,7 @@ import { Request, Response } from "express";
 import { providerServices } from "./providers.service";
 
 /* Get all providers */
-const getAllProviders = async (req: Request, res: Response) => {
-  try {
-    const result = await providerServices.getAllProviders();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieve all provider profile",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
-/* Creating provider profile */
-const createProfile = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id;
-    const data = req.body;
-    const result = await providerServices.createProfile(userId as string, data);
-    return res.status(201).json({
-      success: true,
-      message: "Profile created successfully",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    return res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
+
 
 /* Add a new meal */
 const addMeal = async (req: Request, res: Response) => {
@@ -150,10 +114,8 @@ const updateOrderStatus = async (req: Request, res: Response) => {
 };
 
 export const providerController = {
-  createProfile,
   addMeal,
   UpdateMeal,
-  getAllProviders,
   deleteMeal,
   getProviderOrders,
   updateOrderStatus,

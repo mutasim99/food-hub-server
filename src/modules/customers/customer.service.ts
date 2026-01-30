@@ -127,6 +127,34 @@ const getOrderById = async (orderId: string, userId: string) => {
   return order;
 };
 
+const createProfile = async (userId: string, data: any) => {
+  const existingProfile = await prisma.providerProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+  if (existingProfile) {
+    throw new Error("Provider Profile i already exists");
+  }
+
+  const providerProfile = await prisma.providerProfile.create({
+    data: {
+      ...data,
+      userId,
+    },
+  });
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      role: "PROVIDER",
+    },
+  });
+  return providerProfile;
+};
+
 export const customerServices = {
   getMeals,
   getMealById,
@@ -134,4 +162,5 @@ export const customerServices = {
   getMyOrder,
   createReview,
   getOrderById,
+  createProfile
 };

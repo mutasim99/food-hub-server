@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { customerServices } from "./customer.service";
+import { providerServices } from "../providers/providers.service";
 
 const getMeals = async (req: Request, res: Response) => {
   try {
@@ -128,6 +129,27 @@ const getOrderById = async (req: Request, res: Response) => {
   }
 };
 
+/* Creating provider profile */
+const createProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const data = req.body;
+    const result = await customerServices.createProfile(userId as string, data);
+    return res.status(201).json({
+      success: true,
+      message: "Profile created successfully",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    return res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
+
 export const customerController = {
   getMeals,
   getMealById,
@@ -135,4 +157,5 @@ export const customerController = {
   getMyOrder,
   createReview,
   getOrderById,
+  createProfile,
 };
