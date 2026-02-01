@@ -4,16 +4,21 @@ import { providerController } from "./providers.controller";
 
 const router = Router();
 
-
-/* Get all provider orders */
+/* Get my meals */
 router.get(
-  "/orders",
+  "/provider-meal",
+  auth(UserRole.PROVIDER),
+  providerController.getMyMeals
+);
+/* Get all orders of a provider */
+router.get(
+  "/provider-orders",
   auth(UserRole.PROVIDER),
   providerController.getProviderOrders
 );
 
 /* Add a Meal */
-router.post("/api/meals", auth(UserRole.PROVIDER), providerController.addMeal);
+router.post("/api/add-meals", auth(UserRole.PROVIDER), providerController.addMeal);
 
 /* Update Meal */
 router.put(
@@ -30,7 +35,7 @@ router.patch(
 
 /* Delete Meal */
 router.delete(
-  "/meals/:id",
+  "/provider-meal/:id",
   auth(UserRole.PROVIDER),
   providerController.deleteMeal
 );

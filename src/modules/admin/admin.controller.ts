@@ -2,10 +2,23 @@
 
 import { Request, Response } from "express";
 import { adminServices } from "./admin.service";
+import paginationAndSortingHelper from "../../helpers/paginationAndSortingHelper";
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await adminServices.getAllUsers();
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+    const { page, limit, sortBy, sortOrder, skip } = paginationAndSortingHelper(
+      req.query
+    );
+    const users = await adminServices.getAllUsers({
+      search: searchString,
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      skip,
+    });
     res.status(200).json({
       success: true,
       message: "Successfully retrieved all users",
@@ -44,8 +57,8 @@ const updateUser = async (req: Request, res: Response) => {
 /* Categories */
 const createCategory = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
-    const result = await adminServices.createCategory(name);
+    const { name, image } = req.body;
+    const result = await adminServices.createCategory(name, image);
     res.status(201).json({
       success: true,
       message: "Category added successfully",
@@ -61,23 +74,7 @@ const createCategory = async (req: Request, res: Response) => {
   }
 };
 
-const getAllCategories = async (req: Request, res: Response) => {
-  try {
-    const result = await adminServices.getAllCategories();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved all categories",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
+
 
 /* Orders */
 const getAllOrders = async (req: Request, res: Response) => {
@@ -102,6 +99,5 @@ export const adminController = {
   getAllUsers,
   updateUser,
   createCategory,
-  getAllCategories,
   getAllOrders,
 };

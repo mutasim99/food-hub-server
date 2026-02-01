@@ -9,7 +9,21 @@ const getProviderByUserId = async (userId: string) => {
   });
 };
 
-
+const getMyMeals = async (userId: string) => {
+  const provider = await getProviderByUserId(userId);
+  if (!provider) {
+    throw new Error("You are not authorized");
+  }
+  const meals = await prisma.meal.findMany({
+    where: {
+      providerId: provider.id,
+    },
+    include: {
+      category: true,
+    },
+  });
+  return meals || [];
+};
 
 const addMeal = async (data: Meal, userId: string) => {
   const provider = await getProviderByUserId(userId);
@@ -64,7 +78,7 @@ const deleteMeal = async (mealId: string, userId: string) => {
     throw new Error("Meal not found");
   }
 
-  if (userId !== provider.id) {
+  if (meal.providerId !== provider.id) {
     throw new Error("You are not able to delete this meal");
   }
 
@@ -154,6 +168,7 @@ const updateOrderStatus = async (
 };
 
 export const providerServices = {
+  getMyMeals,
   addMeal,
   updateMeal,
   deleteMeal,

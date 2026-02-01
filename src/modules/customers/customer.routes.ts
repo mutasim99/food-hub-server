@@ -9,7 +9,8 @@ const router = Router();
 
 /* Get all meals */
 router.get("/meals", customerController.getMeals);
-
+/* Get popular Meals*/
+router.post("/api/meals/popular", customerController.getPopularMeals);
 //? Customers only
 /* Create order */
 router.post("/order", auth(UserRole.CUSTOMER), customerController.createOrder);
@@ -21,6 +22,8 @@ router.post(
   auth(UserRole.CUSTOMER),
   customerController.createReview
 );
+/* Get categories */
+router.get("/categories", customerController.getAllCategories);
 
 /* Create provider profile */
 router.post(

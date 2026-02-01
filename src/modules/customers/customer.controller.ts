@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { customerServices } from "./customer.service";
-import { providerServices } from "../providers/providers.service";
 
 const getMeals = async (req: Request, res: Response) => {
   try {
@@ -19,6 +18,25 @@ const getMeals = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getPopularMeals = async(req:Request, res:Response)=>{
+  try {
+    const result = await customerServices.getPopularMeals();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved popular meals",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+  }
+
 
 const getMealById = async (req: Request, res: Response) => {
   try {
@@ -150,12 +168,32 @@ const createProfile = async (req: Request, res: Response) => {
   }
 };
 
+const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const result = await customerServices.getAllCategories();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved all categories",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
+
 export const customerController = {
   getMeals,
+  getPopularMeals,
   getMealById,
   createOrder,
   getMyOrder,
   createReview,
   getOrderById,
   createProfile,
+  getAllCategories
 };

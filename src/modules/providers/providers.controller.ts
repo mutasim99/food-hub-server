@@ -1,8 +1,25 @@
 import { Request, Response } from "express";
 import { providerServices } from "./providers.service";
 
-/* Get all providers */
-
+/* Get My Meals */
+const getMyMeals = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id as string;
+    const result = await providerServices.getMyMeals(userId);
+    res.status(201).json({
+      success: true,
+      message: "Meal retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong";
+    return res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
 
 /* Add a new meal */
 const addMeal = async (req: Request, res: Response) => {
@@ -114,6 +131,7 @@ const updateOrderStatus = async (req: Request, res: Response) => {
 };
 
 export const providerController = {
+  getMyMeals,
   addMeal,
   UpdateMeal,
   deleteMeal,

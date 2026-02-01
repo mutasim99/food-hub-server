@@ -8,6 +8,19 @@ const getMeals = async () => {
   });
 };
 
+const getPopularMeals = async () => {
+  return prisma.meal.findMany({
+    include:{
+      provider:{
+        select:{
+          shopName:true
+        }
+      }
+    },
+    take: 8,
+  });
+};
+
 const getMealById = async (mealId: string) => {
   return await prisma.meal.findUnique({
     where: {
@@ -155,12 +168,17 @@ const createProfile = async (userId: string, data: any) => {
   return providerProfile;
 };
 
+const getAllCategories = async () => {
+  return await prisma.category.findMany();
+};
 export const customerServices = {
   getMeals,
+  getPopularMeals,
   getMealById,
   createOrder,
   getMyOrder,
   createReview,
   getOrderById,
-  createProfile
+  createProfile,
+  getAllCategories,
 };

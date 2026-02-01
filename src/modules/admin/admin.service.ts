@@ -1,12 +1,57 @@
+import { UserWhereInput } from "./../../../generated/prisma/models/User";
 //* Users
 
 import { prisma } from "../../lib/prisma";
 
-const getAllUsers = async () => {
+const getAllUsers = async ({
+  search,
+  page,
+  limit,
+  sortBy,
+  sortOrder,
+  skip,
+}: {
+  search: string | undefined;
+  page: number;
+  limit: number;
+  sortBy: string | undefined;
+  sortOrder: string | undefined;
+  skip: number;
+}) => {
+  const andCondition: UserWhereInput[] = [];
+  if (search) {
+    andCondition.push({
+      OR: [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
   return prisma.user.findMany({
+    take: limit,
+    skip,
+    where: {
+      AND: andCondition,
+    },
     include: {
       ProviderProfile: true,
     },
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : { createdAt: "desc" },
   });
 };
 
@@ -29,7 +74,7 @@ const updateUser = async (
 };
 
 /* Categories */
-const createCategory = async (name: string) => {
+const createCategory = async (name: string, image: string) => {
   const isExists = await prisma.category.findUnique({
     where: { name },
   });
@@ -39,13 +84,12 @@ const createCategory = async (name: string) => {
   return await prisma.category.create({
     data: {
       name,
+      image,
     },
   });
 };
 
-const getAllCategories = async () => {
-  return await prisma.category.findMany();
-};
+
 
 /* Orders */
 
@@ -66,6 +110,5 @@ export const adminServices = {
   getAllUsers,
   updateUser,
   createCategory,
-  getAllCategories,
   getAllOrders,
 };
