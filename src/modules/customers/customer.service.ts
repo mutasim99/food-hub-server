@@ -38,38 +38,91 @@ const createOrder = async (
   address: string,
   items: { mealId: string; qty: number }[]
 ) => {
-  let total = 0;
-  for (const item of items) {
-    const meal = await prisma.meal.findUnique({
-      where: {
-        id: item.mealId,
-      },
-    });
-    if (!meal) {
-      throw new Error("Meal not found");
-    }
-    total += meal.price * item.qty;
+  if (items.length === 0) {
+    throw new Error("No items provided");
   }
-  const order = await prisma.$transaction(async (tx) => {
-    const createOrder = await tx.order.create({
+
+  for (const item of items) {
+    if (item.qty <= 0) {
+      throw new Error("Quantity must be at least 1");
+    }
+  }
+
+  /* Fetch all meals */
+  const mealIds = items.map((i) => i.mealId);
+
+  const meals = await prisma.meal.findMany({
+    where: {
+      id: { in: mealIds },
+    },
+    select: {
+      id: true,
+      price: true,
+      providerId: true,
+      name: true,
+    },
+  });
+
+  if (meals.length !== items.length) {
+    throw new Error("Some meals are not found");
+  }
+
+  /* order from Single provider */
+  const providerId = meals[0]?.providerId;
+  const multipleProvider = meals.some((m) => m.providerId !== providerId);
+  if (multipleProvider) {
+    throw new Error("You can only order from One restaurant at a time");
+  }
+
+  /* Total price */
+  let total = 0;
+  const orderItems = items.map((item) => {
+    const meal = meals.find((m) => m.id === item.mealId)!;
+    const price = meal.price * item.qty;
+    total += price;
+
+    return {
+      mealId: meal.id,
+      qty: item.qty,
+      price: meal.price,
+    };
+  });
+
+  /* Transaction */
+  return prisma.$transaction(async (tx) => {
+    const order = await tx.order.create({
       data: {
         customerId: userId,
         address,
         total,
       },
     });
-    const orderItemsData = items.map((item) => ({
-      orderId: createOrder.id,
-      mealId: item.mealId,
-      qty: item.qty,
-    }));
 
     await tx.orderItem.createMany({
-      data: orderItemsData,
+      data: orderItems.map((i) => ({
+        ...i,
+        orderId: order.id,
+      })),
     });
-    return createOrder;
+
+    return tx.order.findUnique({
+      where: {
+        id: order.id,
+      },
+      include: {
+        items: {
+          include: {
+            meal: {
+              select: {
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+    });
   });
-  return order;
 };
 
 const getMyOrder = async (userId: string) => {
@@ -80,7 +133,14 @@ const getMyOrder = async (userId: string) => {
     include: {
       items: {
         include: {
-          meal: true,
+          meal: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              price: true,
+            },
+          },
         },
       },
     },
@@ -133,11 +193,36 @@ const getOrderById = async (orderId: string, userId: string) => {
     },
   });
 
-  if (!order) {
+  if (!order || order.customerId !== userId) {
     throw new Error("Order not found");
   }
 
   return order;
+};
+
+const cancelOrder = async (orderId: string, userId: string) => {
+  const order = await prisma.order.findUnique({
+    where: {
+      id: orderId,
+    },
+  });
+  if (!order) {
+    throw new Error("Order not found");
+  }
+  if (order.customerId !== userId) {
+    throw new Error("Unauthorized");
+  }
+  if (order.status === "CANCELLED" || order.status === "DELIVERED") {
+    throw new Error("Order can not be cancelled now!!");
+  }
+  return prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      status: "CANCELLED",
+    },
+  });
 };
 
 const createProfile = async (userId: string, data: any) => {
@@ -186,7 +271,7 @@ const getFeaturedProviders = async () => {
         },
       },
     },
-    take:6
+    take: 6,
   });
 };
 export const customerServices = {
@@ -196,8 +281,9 @@ export const customerServices = {
   createOrder,
   getMyOrder,
   createReview,
+  cancelOrder,
   getOrderById,
   createProfile,
   getAllCategories,
-  getFeaturedProviders
+  getFeaturedProviders,
 };

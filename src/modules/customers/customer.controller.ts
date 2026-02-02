@@ -58,13 +58,15 @@ const getMealById = async (req: Request, res: Response) => {
 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const parsed = req.body;
+    const { address, items } = req.body;
+    if (!address || !items?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Address and items are required",
+      });
+    }
     const userId = req.user?.id as string;
-    const result = await customerServices.createOrder(
-      userId,
-      parsed.address,
-      parsed.items
-    );
+    const result = await customerServices.createOrder(userId, address, items);
     res.status(201).json({
       success: true,
       message: "Order created successfully",
@@ -118,6 +120,26 @@ const createReview = async (req: Request, res: Response) => {
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
+
+const cancelOrder = async (req: Request, res: Response) => {
+  try {
+    const orderId = req.params.id as string;
+    const userId = req.user?.id as string;
+    const result = await customerServices.cancelOrder(orderId, userId)
+    res.status(200).json({
+      success: true,
+      message: "Successfully Updated",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong";
     res.status(500).json({
       success: false,
       error: errorMessage,
@@ -208,7 +230,7 @@ const getFeaturedProviders = async (req: Request, res: Response) => {
       error: errorMessage,
     });
   }
-  };
+};
 
 export const customerController = {
   getMeals,
@@ -218,7 +240,8 @@ export const customerController = {
   getMyOrder,
   createReview,
   getOrderById,
+  cancelOrder,
   createProfile,
   getAllCategories,
-  getFeaturedProviders
+  getFeaturedProviders,
 };

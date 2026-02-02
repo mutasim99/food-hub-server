@@ -15,9 +15,17 @@ router.get("/api/meals/popular", customerController.getPopularMeals);
 router.get("/api/featured/providers", customerController.getFeaturedProviders);
 //? Customers only
 /* Create order */
-router.post("/order", auth(UserRole.CUSTOMER), customerController.createOrder);
+router.post(
+  "/create-order",
+  auth(UserRole.CUSTOMER),
+  customerController.createOrder
+);
 /* Get Own order */
-router.get("/order", auth(UserRole.CUSTOMER), customerController.getMyOrder);
+router.get(
+  "/my-orders",
+  auth(UserRole.CUSTOMER),
+  customerController.getMyOrder
+);
 /* Create review */
 router.post(
   "/reviews",
@@ -29,18 +37,23 @@ router.get("/categories", customerController.getAllCategories);
 
 /* Create provider profile */
 router.post(
-  "/profile",
+  "/create-profile",
   auth(UserRole.CUSTOMER),
   customerController.createProfile
 );
 
 /* Get order details */
 router.get(
-  "/order/:id",
+  "/my-orders/:id",
   auth(UserRole.CUSTOMER),
   customerController.getOrderById
 );
 /* Get meal by id */
 router.get("/meals/:id", customerController.getMealById);
-
+/* Cancel order */
+router.patch(
+  "/my-orders/:id/cancel",
+  auth(UserRole.CUSTOMER),
+  customerController.cancelOrder
+);
 export const customerRouter = router;
