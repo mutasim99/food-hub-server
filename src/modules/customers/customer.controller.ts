@@ -19,7 +19,7 @@ const getMeals = async (req: Request, res: Response) => {
   }
 };
 
-const getPopularMeals = async(req:Request, res:Response)=>{
+const getPopularMeals = async (req: Request, res: Response) => {
   try {
     const result = await customerServices.getPopularMeals();
     res.status(200).json({
@@ -35,8 +35,7 @@ const getPopularMeals = async(req:Request, res:Response)=>{
       error: errorMessage,
     });
   }
-  }
-
+};
 
 const getMealById = async (req: Request, res: Response) => {
   try {
@@ -186,6 +185,31 @@ const getAllCategories = async (req: Request, res: Response) => {
   }
 };
 
+const getFeaturedProviders = async (req: Request, res: Response) => {
+  try {
+    const providers = await customerServices.getFeaturedProviders();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved featured restaurant",
+      data: providers.map((P) => ({
+        id: P.id,
+        name: P.shopName,
+        image: P.image,
+        owner: P.user.name,
+        address: P.address,
+        totalMeal: P.Meal.length,
+      })),
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+  };
+
 export const customerController = {
   getMeals,
   getPopularMeals,
@@ -195,5 +219,6 @@ export const customerController = {
   createReview,
   getOrderById,
   createProfile,
-  getAllCategories
+  getAllCategories,
+  getFeaturedProviders
 };

@@ -10,7 +10,9 @@ const router = Router();
 /* Get all meals */
 router.get("/meals", customerController.getMeals);
 /* Get popular Meals*/
-router.post("/api/meals/popular", customerController.getPopularMeals);
+router.get("/api/meals/popular", customerController.getPopularMeals);
+/* Get Featured Providers */
+router.get("/api/featured/providers", customerController.getFeaturedProviders);
 //? Customers only
 /* Create order */
 router.post("/order", auth(UserRole.CUSTOMER), customerController.createOrder);
