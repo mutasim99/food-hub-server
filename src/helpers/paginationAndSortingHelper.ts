@@ -15,7 +15,7 @@ type IOptionResult = {
 
 const paginationAndSortingHelper = (options: IOptions): IOptionResult => {
   const page: number = Number(options.page) || 1;
-  const limit: number = Number(options.limit) || 5;
+  const limit: number = Number(options.limit) || 15;
   const sortBy: string = options.sortBy || "createdAt";
   const sortOrder: string = options.sortOrder || "desc";
 

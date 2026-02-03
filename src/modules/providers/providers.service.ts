@@ -94,15 +94,9 @@ const getProviderOrders = async (userId: string) => {
   if (!provider) {
     throw new Error("Provider profile is not found");
   }
-  return prisma.order.findMany({
+  return await prisma.order.findMany({
     where: {
-      items: {
-        some: {
-          meal: {
-            providerId: provider.id,
-          },
-        },
-      },
+      providerId: provider.id,
     },
     include: {
       customer: {
@@ -113,10 +107,16 @@ const getProviderOrders = async (userId: string) => {
       },
       items: {
         include: {
-          meal: true,
+          meal: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 };
 

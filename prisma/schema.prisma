@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client"
@@ -28,14 +24,15 @@ enum OrderStatus {
 }
 
 model ProviderProfile {
-  id       String @id @default(uuid())
-  userId   String @unique
+  id       String  @id @default(uuid())
+  userId   String  @unique
   shopName String
   address  String
   phone    String
   image    String
-  user     User   @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id])
   Meal     Meal[]
+  Order    Order[]
 }
 
 model Category {
@@ -61,14 +58,16 @@ model Meal {
 }
 
 model Order {
-  id         String      @id @default(uuid())
+  id         String          @id @default(uuid())
   customerId String
-  status     OrderStatus @default(PLACED)
+  providerId String
+  status     OrderStatus     @default(PLACED)
   address    String
   total      Float
-  customer   User        @relation(fields: [customerId], references: [id])
-  createdAt  DateTime    @default(now())
+  customer   User            @relation(fields: [customerId], references: [id])
+  createdAt  DateTime        @default(now())
   items      OrderItem[]
+  provider   ProviderProfile @relation(fields: [providerId], references: [id])
 }
 
 model OrderItem {

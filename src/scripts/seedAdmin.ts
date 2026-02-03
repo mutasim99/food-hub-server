@@ -25,7 +25,8 @@ const seedAdmin = async () => {
         const signUpAdmin = await fetch('http://localhost:5000/api/auth/sign-up/email', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                origin:"http://localhost:5000"
             },
             body: JSON.stringify(adminData)
         });

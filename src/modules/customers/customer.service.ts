@@ -38,6 +38,13 @@ const createOrder = async (
   address: string,
   items: { mealId: string; qty: number }[]
 ) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+  if (!address) {
+    throw new Error("Delivery address is required");
+  }
+
   if (items.length === 0) {
     throw new Error("No items provided");
   }
@@ -68,6 +75,9 @@ const createOrder = async (
   }
 
   /* order from Single provider */
+  if (meals.length === 0) {
+    throw new Error("No meals found");
+  }
   const providerId = meals[0]?.providerId;
   const multipleProvider = meals.some((m) => m.providerId !== providerId);
   if (multipleProvider) {
@@ -93,6 +103,7 @@ const createOrder = async (
     const order = await tx.order.create({
       data: {
         customerId: userId,
+        providerId,
         address,
         total,
       },
