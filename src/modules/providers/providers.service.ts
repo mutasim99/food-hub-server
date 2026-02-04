@@ -123,7 +123,7 @@ const getProviderOrders = async (userId: string) => {
 const updateOrderStatus = async (
   orderId: string,
   userId: string,
-  status: OrderStatus
+  newStatus: OrderStatus
 ) => {
   const provider = await getProviderByUserId(userId);
   if (!provider) {
@@ -132,13 +132,7 @@ const updateOrderStatus = async (
   const order = await prisma.order.findFirst({
     where: {
       id: orderId,
-      items: {
-        some: {
-          meal: {
-            providerId: provider.id,
-          },
-        },
-      },
+      providerId: provider.id,
     },
   });
 
@@ -146,24 +140,35 @@ const updateOrderStatus = async (
     throw new Error("Order not found or not authorized");
   }
 
+  /* Locked order */
+  if (order.status === "CANCELLED" || order.status === "DELIVERED") {
+    throw new Error("This order can no longer be updated");
+  }
+
   /* Status update */
-  const allowed: Record<string, string[]> = {
-    PLACED: ["PLACED"],
-    PREPARING: ["PREPARING"],
-    READY: ["READY"],
-    DELIVERED: ["DELIVERED"],
-    CANCELLED: ["CANCELLED"],
+  const flow: Record<OrderStatus, OrderStatus> = {
+    PLACED: "PREPARING",
+    PREPARING: "READY",
+    READY: "DELIVERED",
+    DELIVERED: "DELIVERED",
+    CANCELLED: "CANCELLED",
   };
 
-  if (!allowed[order.status]?.includes(status)) {
-    throw new Error("Invalid order status transition");
+  const expectedNext = flow[order.status];
+
+  if (newStatus !== expectedNext) {
+    throw new Error(
+      `Invalid transition.${order.status} -> ${newStatus} not allowed`
+    );
   }
 
   return prisma.order.update({
     where: {
       id: orderId,
     },
-    data: { status },
+    data: {
+      status: newStatus,
+    },
   });
 };
 

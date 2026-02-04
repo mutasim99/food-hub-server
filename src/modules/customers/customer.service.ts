@@ -285,6 +285,94 @@ const getFeaturedProviders = async () => {
     take: 6,
   });
 };
+
+export const getOrCreateCart = async (customerId: string) => {
+  let cart = await prisma.cart.findUnique({
+    where: { customerId },
+  });
+  if (!cart) {
+    cart = await prisma.cart.create({
+      data: { customerId },
+    });
+  }
+  return cart;
+};
+
+export const addToCart = async (
+  customerId: string,
+  mealId: string,
+  qty: number
+) => {
+  const cart = await getOrCreateCart(customerId);
+
+  const meal = await prisma.meal.findUnique({
+    where:{
+      id:mealId
+    },
+    select:{
+      price:true
+    }
+  })
+
+  if (!meal) {
+    throw new Error('Meal not found')
+  }
+
+
+  const isExist = await prisma.cartItem.findUnique({
+    where: {
+      cartId_mealId: {
+        cartId: cart.id,
+        mealId,
+        
+      },
+    },
+  });
+
+  if (isExist) {
+    return prisma.cartItem.update({
+      where: {
+        id: isExist.id,
+      },
+      data: {
+        qty: isExist.qty + qty,
+      },
+    });
+  }
+
+  return await prisma.cartItem.create({
+    data: {
+      cartId: cart.id,
+      mealId,
+      qty,
+      price:meal.price
+    },
+  });
+};
+
+export const getCart = async (customerId: string) => {
+  return await prisma.cart.findUnique({
+    where: { customerId },
+    include: {
+      items: {
+        include: {
+          meal: true,
+        },
+      },
+    },
+  });
+};
+
+export const removeFromCart = async (customerId: string, itemId: string) => {
+  const cart = await getOrCreateCart(customerId);
+  return await prisma.cartItem.delete({
+    where: {
+      id: itemId,
+      cartId: cart.id,
+    },
+  });
+};
+
 export const customerServices = {
   getMeals,
   getPopularMeals,
@@ -297,4 +385,7 @@ export const customerServices = {
   createProfile,
   getAllCategories,
   getFeaturedProviders,
+  addToCart,
+  getCart,
+  removeFromCart
 };

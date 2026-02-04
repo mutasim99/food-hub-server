@@ -106,7 +106,7 @@ const getProviderOrders = async (req: Request, res: Response) => {
 
 const updateOrderStatus = async (req: Request, res: Response) => {
   try {
-    const status = req.body;
+    const {status} = req.body;
     const orderId = req.params.id as string;
     const userId = req.user?.id as string;
     const result = await providerServices.updateOrderStatus(

@@ -28,7 +28,7 @@ router.put(
 );
 /* Update order Status */
 router.patch(
-  "/orders/:id/status",
+  "/provider-orders/:id/status",
   auth(UserRole.PROVIDER),
   providerController.updateOrderStatus
 );

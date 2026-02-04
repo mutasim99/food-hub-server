@@ -1,5 +1,3 @@
-
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -55,6 +53,28 @@ model Meal {
   createdAt   DateTime        @default(now())
   OrderItem   OrderItem[]
   review      Review[]
+  CartItem    CartItem[]
+}
+
+model Cart {
+  id         String     @id @default(uuid())
+  customerId String     @unique
+  customer   User       @relation(fields: [customerId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  items      CartItem[]
+}
+
+model CartItem {
+  id     String @id @default(uuid())
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id])
+  mealId String
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  qty    Int
+  price  Float
+
+  @@unique([cartId, mealId])
 }
 
 model Order {
@@ -108,6 +128,7 @@ model User {
   role   String? @default("CUSTOMER")
   phone  Int?
   status String? @default("ACTIVE")
+  Cart   Cart?
 
   @@unique([email])
   @@map("user")

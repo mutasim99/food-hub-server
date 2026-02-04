@@ -42,6 +42,11 @@ router.post(
   customerController.createProfile
 );
 
+/* Create cart */
+router.post("/cart/add", auth(UserRole.CUSTOMER), customerController.addToCart);
+/* get Cart */
+router.get('/cart', auth(UserRole.CUSTOMER), customerController.getCart)
+
 /* Get order details */
 router.get(
   "/my-orders/:id",

@@ -50,8 +50,12 @@ const auth = (...roles: UserRole[]) => {
         role: session.user.role as string,
         emailVerified: session.user.emailVerified,
       };
+      
+      if (!req.user) {
+        return res.status(401).json({ error: "Not loggedIn" });
+      }
 
-      if (roles.length && !roles.includes(session.user.role as UserRole )) {
+      if (roles.length && !roles.includes(session.user.role as UserRole)) {
         return res.status(403).json({
           success: false,
           message: "Forbidden!, you can not access this",
@@ -65,4 +69,4 @@ const auth = (...roles: UserRole[]) => {
   };
 };
 
-export default auth
+export default auth;
