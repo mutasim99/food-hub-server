@@ -306,25 +306,23 @@ export const addToCart = async (
   const cart = await getOrCreateCart(customerId);
 
   const meal = await prisma.meal.findUnique({
-    where:{
-      id:mealId
+    where: {
+      id: mealId,
     },
-    select:{
-      price:true
-    }
-  })
+    select: {
+      price: true,
+    },
+  });
 
   if (!meal) {
-    throw new Error('Meal not found')
+    throw new Error("Meal not found");
   }
-
 
   const isExist = await prisma.cartItem.findUnique({
     where: {
       cartId_mealId: {
         cartId: cart.id,
         mealId,
-        
       },
     },
   });
@@ -345,7 +343,7 @@ export const addToCart = async (
       cartId: cart.id,
       mealId,
       qty,
-      price:meal.price
+      price: meal.price,
     },
   });
 };
@@ -365,10 +363,20 @@ export const getCart = async (customerId: string) => {
 
 export const removeFromCart = async (customerId: string, itemId: string) => {
   const cart = await getOrCreateCart(customerId);
-  return await prisma.cartItem.delete({
+
+  const item = await prisma.cartItem.findFirst({
     where: {
       id: itemId,
       cartId: cart.id,
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found");
+  }
+  return await prisma.cartItem.delete({
+    where: {
+      id: itemId
     },
   });
 };
@@ -387,5 +395,5 @@ export const customerServices = {
   getFeaturedProviders,
   addToCart,
   getCart,
-  removeFromCart
+  removeFromCart,
 };

@@ -275,6 +275,29 @@ const getCart = async (req: Request, res: Response) => {
   }
 };
 
+const removeFromCart = async (req: Request, res: Response) => {
+  try {
+    const  itemId  = req.params.itemId  as string;
+    const customerId = req.user?.id as string;
+    if (!itemId) {
+      return res.status(400).json({ error: "ItemId is required" });
+    }
+    const result = await customerServices.removeFromCart(customerId, itemId);
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved all cart",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+  }
+
 export const customerController = {
   getMeals,
   getPopularMeals,
@@ -288,5 +311,6 @@ export const customerController = {
   getAllCategories,
   getFeaturedProviders,
   addToCart,
-  getCart
+  getCart,
+  removeFromCart
 };

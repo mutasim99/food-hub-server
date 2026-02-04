@@ -45,7 +45,7 @@ router.post(
 /* Create cart */
 router.post("/cart/add", auth(UserRole.CUSTOMER), customerController.addToCart);
 /* get Cart */
-router.get('/cart', auth(UserRole.CUSTOMER), customerController.getCart)
+router.get("/cart", auth(UserRole.CUSTOMER), customerController.getCart);
 
 /* Get order details */
 router.get(
@@ -55,6 +55,12 @@ router.get(
 );
 /* Get meal by id */
 router.get("/meals/:id", customerController.getMealById);
+/* Remove from cart */
+router.delete(
+  "/cart-item/:itemId",
+  auth(UserRole.CUSTOMER),
+  customerController.removeFromCart
+);
 /* Cancel order */
 router.patch(
   "/my-orders/:id/cancel",
