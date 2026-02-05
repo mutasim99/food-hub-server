@@ -1,60 +1,7 @@
 import { Request, Response } from "express";
 import { customerServices } from "./customer.service";
 
-const getMeals = async (req: Request, res: Response) => {
-  try {
-    const result = await customerServices.getMeals();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved all meals",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
 
-const getPopularMeals = async (req: Request, res: Response) => {
-  try {
-    const result = await customerServices.getPopularMeals();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved popular meals",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
-
-const getMealById = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id as string;
-    const result = await customerServices.getMealById(id);
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -106,7 +53,11 @@ const createReview = async (req: Request, res: Response) => {
   try {
     const { mealId, rating, comment } = req.body;
     const userId = req.user?.id as string;
-    const result = customerServices.createReview(
+
+    if (!mealId || !rating || !comment) {
+      return res.status(400).json({ error: "All fields required" });
+    }
+    const result =await customerServices.createReview(
       userId,
       mealId,
       rating,
@@ -120,6 +71,25 @@ const createReview = async (req: Request, res: Response) => {
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
+
+const getMealReview = async (req: Request, res: Response) => {
+  try {
+    const { mealId } = req.params;
+    const result = await customerServices.getMealReview(mealId as string);
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong";
     res.status(500).json({
       success: false,
       error: errorMessage,
@@ -189,48 +159,9 @@ const createProfile = async (req: Request, res: Response) => {
   }
 };
 
-const getAllCategories = async (req: Request, res: Response) => {
-  try {
-    const result = await customerServices.getAllCategories();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved all categories",
-      data: result,
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
 
-const getFeaturedProviders = async (req: Request, res: Response) => {
-  try {
-    const providers = await customerServices.getFeaturedProviders();
-    res.status(200).json({
-      success: true,
-      message: "Successfully retrieved featured restaurant",
-      data: providers.map((P) => ({
-        id: P.id,
-        name: P.shopName,
-        image: P.image,
-        owner: P.user.name,
-        address: P.address,
-        totalMeal: P.Meal.length,
-      })),
-    });
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
-    res.status(500).json({
-      success: false,
-      error: errorMessage,
-    });
-  }
-};
+
+
 
 const addToCart = async (req: Request, res: Response) => {
   try {
@@ -277,7 +208,7 @@ const getCart = async (req: Request, res: Response) => {
 
 const removeFromCart = async (req: Request, res: Response) => {
   try {
-    const  itemId  = req.params.itemId  as string;
+    const itemId = req.params.itemId as string;
     const customerId = req.user?.id as string;
     if (!itemId) {
       return res.status(400).json({ error: "ItemId is required" });
@@ -296,21 +227,18 @@ const removeFromCart = async (req: Request, res: Response) => {
       error: errorMessage,
     });
   }
-  }
+};
 
 export const customerController = {
-  getMeals,
-  getPopularMeals,
-  getMealById,
+  
   createOrder,
   getMyOrder,
   createReview,
+  getMealReview,
   getOrderById,
   cancelOrder,
   createProfile,
-  getAllCategories,
-  getFeaturedProviders,
   addToCart,
   getCart,
-  removeFromCart
+  removeFromCart,
 };

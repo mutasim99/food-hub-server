@@ -1,37 +1,8 @@
 import { prisma } from "../../lib/prisma";
 
-const getMeals = async () => {
-  return await prisma.meal.findMany({
-    include: {
-      provider: true,
-    },
-  });
-};
 
-const getPopularMeals = async () => {
-  return prisma.meal.findMany({
-    include: {
-      provider: {
-        select: {
-          shopName: true,
-        },
-      },
-    },
-    take: 8,
-  });
-};
 
-const getMealById = async (mealId: string) => {
-  return await prisma.meal.findUnique({
-    where: {
-      id: mealId,
-    },
-    include: {
-      provider: true,
-      review: true,
-    },
-  });
-};
+
 
 const createOrder = async (
   userId: string,
@@ -164,13 +135,12 @@ const createReview = async (
   rating: number,
   comment: string
 ) => {
-  const hasOrder = await prisma.order.findFirst({
+  const hasOrder = await prisma.orderItem.findFirst({
     where: {
-      customerId: userId,
-      items: {
-        some: {
-          mealId,
-        },
+      mealId,
+      order: {
+        customerId: userId,
+        status: "DELIVERED",
       },
     },
   });
@@ -179,12 +149,39 @@ const createReview = async (
     throw new Error("You must order the meal before reviewing");
   }
 
+  const existing = await prisma.review.findFirst({
+    where: {
+      userId,
+      mealId,
+    },
+  });
+
+  if (existing) {
+    throw new Error("You already reviewed this meal");
+  }
+
   return prisma.review.create({
     data: {
       userId,
       mealId,
       rating,
       comment,
+    },
+  });
+};
+
+const getMealReview = async (mealId: string) => {
+  return await prisma.review.findMany({
+    where: { mealId },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 };
@@ -264,27 +261,9 @@ const createProfile = async (userId: string, data: any) => {
   return providerProfile;
 };
 
-const getAllCategories = async () => {
-  return await prisma.category.findMany();
-};
 
-const getFeaturedProviders = async () => {
-  return await prisma.providerProfile.findMany({
-    include: {
-      user: {
-        select: {
-          name: true,
-        },
-      },
-      Meal: {
-        select: {
-          name: true,
-        },
-      },
-    },
-    take: 6,
-  });
-};
+
+
 
 export const getOrCreateCart = async (customerId: string) => {
   let cart = await prisma.cart.findUnique({
@@ -376,23 +355,20 @@ export const removeFromCart = async (customerId: string, itemId: string) => {
   }
   return await prisma.cartItem.delete({
     where: {
-      id: itemId
+      id: itemId,
     },
   });
 };
 
 export const customerServices = {
-  getMeals,
-  getPopularMeals,
-  getMealById,
+  
   createOrder,
   getMyOrder,
   createReview,
+  getMealReview,
   cancelOrder,
   getOrderById,
   createProfile,
-  getAllCategories,
-  getFeaturedProviders,
   addToCart,
   getCart,
   removeFromCart,
