@@ -1,15 +1,51 @@
+import { MealWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { MealFilterTypes } from "./public.types";
 
-const getMeals = async () => {
+const getMeals = async (filters: MealFilterTypes) => {
+  const meal: MealWhereInput = {};
+
+  if (filters.categoryId) {
+    meal.categoryId = filters.categoryId;
+  }
+  if (filters.providerId) {
+    meal.providerId = filters.providerId;
+  }
+
+  if (filters.minPrice || filters.maxPrice) {
+    meal.price = {};
+    if (filters.minPrice !== undefined) {
+      meal.price.gte = Number(filters.minPrice);
+    }
+    if (filters.maxPrice !== undefined) {
+      meal.price.lte = Number(filters.maxPrice);
+    }
+  }
+
   return await prisma.meal.findMany({
+    where: meal,
     include: {
-      provider: true,
+      provider: {
+        select: {
+          shopName: true,
+          image: true,
+        },
+      },
+      category: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 };
 
 const getPopularMeals = async () => {
   return prisma.meal.findMany({
+    orderBy: {
+      OrderItem: {
+        _count: "desc",
+      },
+    },
     include: {
       provider: {
         select: {
@@ -27,8 +63,23 @@ const getMealById = async (mealId: string) => {
       id: mealId,
     },
     include: {
-      provider: true,
-      review: true,
+      provider: {
+        select: {
+          id: true,
+          shopName: true,
+          image: true,
+          address: true,
+        },
+      },
+      review: {
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 };
@@ -55,10 +106,36 @@ const getFeaturedProviders = async () => {
   });
 };
 
+const getAllProviders = async () => {
+  return prisma.providerProfile.findMany({
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+};
+const getProviderById = async (providerId: string) => {
+  return prisma.providerProfile.findUnique({
+    where: { id: providerId },
+    include: {
+      Meal: {
+        include: {
+          category: true,
+        },
+      },
+    },
+  });
+};
+
 export const publicService = {
   getMeals,
   getPopularMeals,
   getMealById,
   getAllCategories,
   getFeaturedProviders,
+  getAllProviders,
+  getProviderById,
 };
