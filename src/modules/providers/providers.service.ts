@@ -54,11 +54,19 @@ const updateMeal = async (mealId: string, userId: string, data: Meal) => {
   if (meal.providerId !== provider.id) {
     throw new Error("You are not able to update this meal");
   }
+
+  const updateData = {
+    name: data.name,
+    description: data.description,
+    price: data.price,
+    image: data.image,
+    categoryId: data.categoryId,
+  };
   return await prisma.meal.update({
     where: {
       id: mealId,
     },
-    data,
+    data: updateData,
   });
 };
 

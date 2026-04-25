@@ -1,3 +1,4 @@
+import { Role } from './../../generated/prisma/enums';
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
@@ -27,7 +28,7 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      role: { type: "string", defaultValue: "CUSTOMER" },
+      role: { type: "string", defaultValue: Role.CUSTOMER },
       phone: { type: "number" },
       status: { type: "string", defaultValue: "ACTIVE" },
     },
