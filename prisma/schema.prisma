@@ -126,7 +126,7 @@ model User {
   Review          Review[]
 
   role   Role    @default(CUSTOMER)
-  phone  Int?
+  phone  String?
   status String? @default("ACTIVE")
   Cart   Cart?
 

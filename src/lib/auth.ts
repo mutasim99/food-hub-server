@@ -29,7 +29,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: { type: "string", defaultValue: Role.CUSTOMER },
-      phone: { type: "number" },
+      phone: { type: "string" },
       status: { type: "string", defaultValue: "ACTIVE" },
     },
   },

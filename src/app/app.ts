@@ -6,6 +6,7 @@ import { providerRouter } from "../modules/providers/providers.routes";
 import { customerRouter } from "../modules/customers/customer.routes";
 import { adminRouter } from "../modules/admin/admin.routes";
 import { publicRouter } from "../modules/public/public.routes";
+import { ProfileRouter } from "../modules/profile/profile.routes";
 
 const app: Application = express();
 
@@ -23,6 +24,7 @@ app.use("/", providerRouter);
 app.use("/", customerRouter);
 app.use("/", adminRouter);
 app.use("/", publicRouter);
+app.use("/", ProfileRouter);
 
 app.get("/", async (req, res) => {
   res.send("this is assignment4");
