@@ -1,5 +1,8 @@
+import status from "http-status";
+import AppError from "../../errorHelper/AppError";
 import { prisma } from "../../lib/prisma";
-
+import { UserRole } from "../../middleware/auth.middleware";
+import { deleteFileFromCloudinary } from "../../config/cloudinary.config";
 
 const createOrder = async (
   userId: string,
@@ -71,7 +74,7 @@ const createOrder = async (
     const order = await tx.order.create({
       data: {
         customerId: userId,
-        providerId,
+        providerId: providerId as string,
         address,
         total,
       },
@@ -230,37 +233,47 @@ const cancelOrder = async (orderId: string, userId: string) => {
   });
 };
 
-const createProfile = async (userId: string, data: any) => {
-  const existingProfile = await prisma.providerProfile.findUnique({
-    where: {
-      userId,
-    },
-  });
-  if (existingProfile) {
-    throw new Error("Provider Profile i already exists");
+const createProviderProfile = async (userId: string, data: any) => {
+  let uploadImageUrl = data.image;
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existingUser = await tx.providerProfile.findUnique({
+        where: {
+          userId: userId,
+        },
+      });
+      if (existingUser) {
+        throw new AppError(
+          status.BAD_REQUEST,
+          "Provider profile is already exists"
+        );
+      }
+
+      const providerProfile = await tx.providerProfile.create({
+        data: {
+          shopName: data.shopName,
+          address: data.address,
+          phone: data.phone,
+          image: uploadImageUrl ?? null,
+          userId: userId,
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          role: UserRole.PROVIDER,
+        },
+      });
+      return providerProfile;
+    });
+  } catch (error) {
+    console.log("error", error);
+    await deleteFileFromCloudinary(uploadImageUrl);
   }
-
-  const providerProfile = await prisma.providerProfile.create({
-    data: {
-      ...data,
-      userId,
-    },
-  });
-
-  await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      role: "PROVIDER",
-    },
-  });
-  return providerProfile;
 };
-
-
-
-
 
 export const getOrCreateCart = async (customerId: string) => {
   let cart = await prisma.cart.findUnique({
@@ -358,14 +371,13 @@ export const removeFromCart = async (customerId: string, itemId: string) => {
 };
 
 export const customerServices = {
-  
   createOrder,
   getMyOrder,
   createReview,
   getMealReview,
   cancelOrder,
   getOrderById,
-  createProfile,
+  createProviderProfile,
   addToCart,
   getCart,
   removeFromCart,

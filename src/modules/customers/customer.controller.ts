@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { customerServices } from "./customer.service";
 
-
-
 const createOrder = async (req: Request, res: Response) => {
   try {
     const { address, items } = req.body;
@@ -57,7 +55,7 @@ const createReview = async (req: Request, res: Response) => {
     if (!mealId || !rating || !comment) {
       return res.status(400).json({ error: "All fields required" });
     }
-    const result =await customerServices.createReview(
+    const result = await customerServices.createReview(
       userId,
       mealId,
       rating,
@@ -139,11 +137,19 @@ const getOrderById = async (req: Request, res: Response) => {
 };
 
 /* Creating provider profile */
-const createProfile = async (req: Request, res: Response) => {
+const createProviderProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const data = req.body;
-    const result = await customerServices.createProfile(userId as string, data);
+    const file = req.file;
+    const payload = {
+      ...req.body,
+      image: file ? file.path : undefined,
+    };
+    const result = await customerServices.createProviderProfile(
+      userId as string,
+      payload
+    );
+       
     return res.status(201).json({
       success: true,
       message: "Profile created successfully",
@@ -158,10 +164,6 @@ const createProfile = async (req: Request, res: Response) => {
     });
   }
 };
-
-
-
-
 
 const addToCart = async (req: Request, res: Response) => {
   try {
@@ -230,14 +232,13 @@ const removeFromCart = async (req: Request, res: Response) => {
 };
 
 export const customerController = {
-  
   createOrder,
   getMyOrder,
   createReview,
   getMealReview,
   getOrderById,
   cancelOrder,
-  createProfile,
+  createProviderProfile,
   addToCart,
   getCart,
   removeFromCart,

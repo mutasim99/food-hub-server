@@ -1,6 +1,7 @@
 import { Router } from "express";
 import auth, { UserRole } from "../../middleware/auth.middleware";
 import { providerController } from "./providers.controller";
+import { multerUpload } from "../../config/multer.config";
 
 const router = Router();
 
@@ -18,7 +19,12 @@ router.get(
 );
 
 /* Add a Meal */
-router.post("/api/add-meals", auth(UserRole.PROVIDER), providerController.addMeal);
+router.post(
+  "/api/add-meals",
+  auth(UserRole.PROVIDER),
+  multerUpload.single("image"),
+  providerController.addMeal
+);
 
 /* Update Meal */
 router.put(

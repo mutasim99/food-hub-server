@@ -1,6 +1,8 @@
 import { fromNodeHeaders } from "better-auth/node";
 import { auth as betterAuth } from "../lib/auth";
 import { NextFunction, Request, Response } from "express";
+import AppError from "../errorHelper/AppError";
+import status from "http-status";
 
 export enum UserRole {
   CUSTOMER = "CUSTOMER",
@@ -25,6 +27,13 @@ declare global {
 const auth = (...roles: UserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const sessionToken =
+        req.cookies["__Secure-session_token"] || req.cookies["session_token"];
+
+      if (!sessionToken) {
+        throw new AppError(status.UNAUTHORIZED, "Unauthorized access");
+      }
+
       const session = await betterAuth.api.getSession({
         headers: fromNodeHeaders(req.headers),
       });
@@ -50,7 +59,7 @@ const auth = (...roles: UserRole[]) => {
         role: session.user.role as string,
         emailVerified: session.user.emailVerified,
       };
-      
+
       if (!req.user) {
         return res.status(401).json({ error: "Not loggedIn" });
       }

@@ -1,0 +1,83 @@
+import { prisma } from "../../lib/prisma.js";
+const getAllUsers = async ({ search, page, limit, sortBy, sortOrder, skip, }) => {
+    const andCondition = [];
+    if (search) {
+        andCondition.push({
+            OR: [
+                {
+                    name: {
+                        contains: search,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    email: {
+                        contains: search,
+                        mode: "insensitive",
+                    },
+                },
+            ],
+        });
+    }
+    return prisma.user.findMany({
+        take: limit,
+        skip,
+        where: {
+            AND: andCondition,
+        },
+        include: {
+            ProviderProfile: true,
+        },
+        orderBy: sortBy && sortOrder
+            ? {
+                [sortBy]: sortOrder,
+            }
+            : { createdAt: "desc" },
+    });
+};
+const updateUser = async (userId, data) => {
+    if (!data.role && !data.status) {
+        throw new Error("Nothing to update");
+    }
+    return prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data,
+    });
+};
+/* Categories */
+const createCategory = async (name, image) => {
+    const isExists = await prisma.category.findUnique({
+        where: { name },
+    });
+    if (isExists) {
+        throw new Error("Category already exists");
+    }
+    return await prisma.category.create({
+        data: {
+            name,
+            image,
+        },
+    });
+};
+/* Orders */
+const getAllOrders = async () => {
+    return prisma.order.findMany({
+        include: {
+            customer: true,
+            items: {
+                include: {
+                    meal: true,
+                },
+            },
+        },
+    });
+};
+export const adminServices = {
+    getAllUsers,
+    updateUser,
+    createCategory,
+    getAllOrders,
+};
+//# sourceMappingURL=admin.service.js.map

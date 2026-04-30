@@ -1,5 +1,7 @@
-import { Meal, OrderStatus } from "../../../generated/prisma/client";
+import { deleteFileFromCloudinary } from "../../config/cloudinary.config";
+import { Meal, OrderStatus } from "../../generated/client";
 import { prisma } from "../../lib/prisma";
+import { ICreateMealPayload } from "./provider.interface";
 
 const getProviderByUserId = async (userId: string) => {
   return prisma.providerProfile.findUnique({
@@ -25,14 +27,28 @@ const getMyMeals = async (userId: string) => {
   return meals || [];
 };
 
-const addMeal = async (data: Meal, userId: string) => {
+const addMeal = async (userId: string, payload: ICreateMealPayload) => {
   const provider = await getProviderByUserId(userId);
   if (!provider) {
+    await deleteFileFromCloudinary(payload.image);
     throw new Error("Provider profile not found");
   }
-  return prisma.meal.create({
-    data: { ...data, providerId: provider.id },
-  });
+  try {
+    const result = await prisma.meal.create({
+      data: {
+        name: payload.name,
+        description: payload.description,
+        price: payload.price,
+        image: payload.image,
+        categoryId: payload.categoryId,
+        providerId: provider.id,
+      },
+    });
+    return result;
+  } catch (error) {
+    console.log("failed to create meal", error);
+    await deleteFileFromCloudinary(payload.image);
+  }
 };
 
 const updateMeal = async (mealId: string, userId: string, data: Meal) => {

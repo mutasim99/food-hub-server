@@ -1,6 +1,4 @@
-import { UserWhereInput } from "./../../../generated/prisma/models/User";
-//* Users
-
+import { UserWhereInput } from "../../generated/models/User";
 import { prisma } from "../../lib/prisma";
 
 const getAllUsers = async ({

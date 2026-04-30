@@ -1,4 +1,4 @@
-import { MealWhereInput } from "../../../generated/prisma/models";
+import { MealWhereInput } from "../../generated/models";
 import { prisma } from "../../lib/prisma";
 import { MealFilterTypes } from "./public.types";
 

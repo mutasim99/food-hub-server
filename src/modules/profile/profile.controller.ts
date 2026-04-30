@@ -4,7 +4,6 @@ import { profileService } from "./profile.service";
 const getMyProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id as string;
-
     const result = await profileService.getMyProfile(userId);
 
     res.status(200).json({
@@ -22,6 +21,7 @@ const getMyProfile = async (req: Request, res: Response) => {
 const updateMyProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id as string;
+    
 
     const file = req.file as Express.Multer.File;
 

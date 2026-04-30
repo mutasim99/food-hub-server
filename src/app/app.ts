@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "../lib/auth";
 import { providerRouter } from "../modules/providers/providers.routes";
@@ -11,12 +12,14 @@ import { ProfileRouter } from "../modules/profile/profile.routes";
 const app: Application = express();
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   })
 );
+
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 

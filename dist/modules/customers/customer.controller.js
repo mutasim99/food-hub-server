@@ -1,0 +1,222 @@
+import { customerServices } from "./customer.service.js";
+const createOrder = async (req, res) => {
+    try {
+        const { address, items } = req.body;
+        if (!address || !items?.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Address and items are required",
+            });
+        }
+        const userId = req.user?.id;
+        const result = await customerServices.createOrder(userId, address, items);
+        res.status(201).json({
+            success: true,
+            message: "Order created successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Order failed";
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+            error: errorMessage,
+        });
+    }
+};
+const getMyOrder = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const result = await customerServices.getMyOrder(userId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const createReview = async (req, res) => {
+    try {
+        const { mealId, rating, comment } = req.body;
+        const userId = req.user?.id;
+        if (!mealId || !rating || !comment) {
+            return res.status(400).json({ error: "All fields required" });
+        }
+        const result = await customerServices.createReview(userId, mealId, rating, comment);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const getMealReview = async (req, res) => {
+    try {
+        const { mealId } = req.params;
+        const result = await customerServices.getMealReview(mealId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const cancelOrder = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const userId = req.user?.id;
+        const result = await customerServices.cancelOrder(orderId, userId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully Updated",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const getOrderById = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const userId = req.user?.id;
+        const result = await customerServices.getOrderById(orderId, userId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+/* Creating provider profile */
+const createProviderProfile = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const file = req.file;
+        const payload = {
+            ...req.body,
+            image: file ? file.path : undefined,
+        };
+        const result = await customerServices.createProviderProfile(userId, payload);
+        return res.status(201).json({
+            success: true,
+            message: "Profile created successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        return res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const addToCart = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const { mealId, qty } = req.body;
+        if (!mealId || qty < 1) {
+            return res.status(400).json({ error: "Invalid data" });
+        }
+        const result = await customerServices.addToCart(userId, mealId, qty);
+        res.status(201).json({
+            success: true,
+            message: "Successfully items add to the cart",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        return res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const getCart = async (req, res) => {
+    try {
+        const customerId = req.user?.id;
+        const result = await customerServices.getCart(customerId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved all cart",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+const removeFromCart = async (req, res) => {
+    try {
+        const itemId = req.params.itemId;
+        const customerId = req.user?.id;
+        if (!itemId) {
+            return res.status(400).json({ error: "ItemId is required" });
+        }
+        const result = await customerServices.removeFromCart(customerId, itemId);
+        res.status(200).json({
+            success: true,
+            message: "Successfully retrieved all cart",
+            data: result,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        res.status(500).json({
+            success: false,
+            error: errorMessage,
+        });
+    }
+};
+export const customerController = {
+    createOrder,
+    getMyOrder,
+    createReview,
+    getMealReview,
+    getOrderById,
+    cancelOrder,
+    createProviderProfile,
+    addToCart,
+    getCart,
+    removeFromCart,
+};
+//# sourceMappingURL=customer.controller.js.map

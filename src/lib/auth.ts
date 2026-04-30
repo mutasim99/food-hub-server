@@ -1,13 +1,16 @@
-import { Role } from './../../generated/prisma/enums';
+
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
+import { oAuthProxy } from "better-auth/plugins";
+import { Role } from "../generated/enums";
+
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-
+  baseURL: process.env.APP_URL,
   trustedOrigins: [process.env.APP_URL!],
 
   session: {
@@ -15,15 +18,6 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: 10,
     },
-  },
-
-  advanced: {
-    cookiePrefix: "better-auth",
-    useSecureCookies: process.env.NODE_ENV === "production",
-    crossSubDomainCookies: {
-      enabled: false,
-    },
-    disableCSRFCheck: true,
   },
 
   user: {
@@ -37,11 +31,34 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
- 
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
+  advanced: {
+    cookies: {
+      session_token: {
+        name: "session_token",
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true,
+        },
+      },
+      state: {
+        name: "session_token",
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true,
+        },
+      },
+    },
+  },
+  plugins:[oAuthProxy()]
 });

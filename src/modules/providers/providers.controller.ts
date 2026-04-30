@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { providerServices } from "./providers.service";
+import AppError from "../../errorHelper/AppError";
+import status from "http-status";
 
 /* Get My Meals */
 const getMyMeals = async (req: Request, res: Response) => {
@@ -24,12 +26,21 @@ const getMyMeals = async (req: Request, res: Response) => {
 /* Add a new meal */
 const addMeal = async (req: Request, res: Response) => {
   try {
+    if (!req.file) {
+      throw new AppError(status.BAD_REQUEST, "Meal image is not required");
+    }
     const userId = req.user?.id as string;
-    const data = req.body;
-    const result = await providerServices.addMeal(data, userId);
+    const mealData = {
+      ...req.body,
+      price: Number(req.body.price),
+      image: req.file.path,
+    };
+
+    const result = await providerServices.addMeal(userId, mealData);
+
     res.status(201).json({
       success: true,
-      message: "Meal added successfully",
+      message: "Meal published successfully! 🍳",
       data: result,
     });
   } catch (error) {
@@ -106,7 +117,7 @@ const getProviderOrders = async (req: Request, res: Response) => {
 
 const updateOrderStatus = async (req: Request, res: Response) => {
   try {
-    const {status} = req.body;
+    const { status } = req.body;
     const orderId = req.params.id as string;
     const userId = req.user?.id as string;
     const result = await providerServices.updateOrderStatus(

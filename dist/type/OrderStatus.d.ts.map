@@ -1,0 +1,1 @@
+{"version":3,"file":"OrderStatus.d.ts","sourceRoot":"","sources":["../../src/type/OrderStatus.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,WAAW;IAC1B,MAAM,EAAE,QAAQ,CAAC;IACjB,SAAS,EAAE,WAAW,CAAC;IACvB,KAAK,EAAE,OAAO,CAAC;IACf,SAAS,EAAE,WAAW,CAAC;IACvB,SAAS,EAAE,WAAW,CAAC;CACxB"}

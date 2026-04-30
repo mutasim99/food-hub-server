@@ -20,7 +20,7 @@ const updateMyProfile = async (
     throw new Error("User not found");
   }
 
-  /* 🔥 DELETE OLD IMAGE */
+
   if (payload.image && user.image) {
     await deleteFileFromCloudinary(user.image);
   }

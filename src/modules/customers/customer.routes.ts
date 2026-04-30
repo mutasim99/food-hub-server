@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { customerController } from "./customer.controller";
 import auth, { UserRole } from "../../middleware/auth.middleware";
+import { multerUpload } from "../../config/multer.config";
 
 const router = Router();
 
 //? Public Routes
-
 
 //? Customers only
 /* Create order */
@@ -27,12 +27,12 @@ router.post(
   customerController.createReview
 );
 
-
 /* Create provider profile */
 router.post(
   "/create-profile",
   auth(UserRole.CUSTOMER),
-  customerController.createProfile
+  multerUpload.single("image"),
+  customerController.createProviderProfile
 );
 
 /* Create cart */
