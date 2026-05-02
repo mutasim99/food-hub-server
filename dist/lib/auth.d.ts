@@ -1,6 +1,6 @@
 export declare const auth: import("better-auth").Auth<{
     database: (options: import("better-auth").BetterAuthOptions) => import("better-auth").DBAdapter<import("better-auth").BetterAuthOptions>;
-    baseURL: string | undefined;
+    baseURL: string;
     trustedOrigins: string[];
     session: {
         cookieCache: {
@@ -40,7 +40,6 @@ export declare const auth: import("better-auth").Auth<{
                     httpOnly: true;
                     secure: true;
                     sameSite: "none";
-                    partitioned: true;
                 };
             };
             state: {
@@ -49,7 +48,6 @@ export declare const auth: import("better-auth").Auth<{
                     httpOnly: true;
                     secure: true;
                     sameSite: "none";
-                    partitioned: true;
                 };
             };
         };

@@ -7,7 +7,9 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    baseURL: process.env.APP_URL,
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
+        ? process.env.NEXT_PUBLIC_BACKEND_URL
+        : "https://food-hub-server-cyan.vercel.app",
     trustedOrigins: [process.env.APP_URL],
     session: {
         cookieCache: {
@@ -39,20 +41,18 @@ export const auth = betterAuth({
                     httpOnly: true,
                     secure: true,
                     sameSite: "none",
-                    partitioned: true,
                 },
             },
             state: {
-                name: "session_token",
+                name: "oAuth_token",
                 attributes: {
                     httpOnly: true,
                     secure: true,
                     sameSite: "none",
-                    partitioned: true,
                 },
             },
         },
     },
-    plugins: [oAuthProxy()]
+    plugins: [oAuthProxy()],
 });
 //# sourceMappingURL=auth.js.map

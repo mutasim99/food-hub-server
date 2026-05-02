@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "https://foodhub-client-bay.vercel.app",
     credentials: true,
   })
 );
