@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://foodhub-client-bay.vercel.app",
+    origin: process.env.FRONTEND_URL || "https://foodhub-client-indol.vercel.app",
     credentials: true,
   })
 );

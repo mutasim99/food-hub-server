@@ -10,8 +10,11 @@ export const auth = betterAuth({
   }),
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
     ? process.env.NEXT_PUBLIC_BACKEND_URL
-    : "https://food-hub-server-cyan.vercel.app",
-  trustedOrigins: [process.env.APP_URL!],
+    : "https://food-hub-server-two.vercel.app",
+  trustedOrigins: [
+    process.env.APP_URL!,
+    "https://foodhub-client-indol.vercel.app",
+  ],
 
   session: {
     cookieCache: {
