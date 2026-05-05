@@ -21,12 +21,12 @@ const seedAdmin = async () => {
     }
 
     const signUpAdmin = await fetch(
-      "http://localhost:5000/api/auth/sign-up/email",
+      "https://food-hub-server-two.vercel.app/api/auth/sign-up/email",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          origin: "http://localhost:5000",
+          origin: "https://food-hub-server-two.vercel.app",
         },
         body: JSON.stringify(adminData),
       }

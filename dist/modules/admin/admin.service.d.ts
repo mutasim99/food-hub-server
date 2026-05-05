@@ -47,45 +47,50 @@ export declare const adminServices: {
         name: string;
         image: string;
     }>;
-    getAllOrders: () => Promise<({
-        customer: {
-            role: import("../../generated/enums").Role;
-            phone: string | null;
-            status: string | null;
+    getAllOrders: ({ search, page, limit, sortBy, sortOrder, skip, }: {
+        search: string | undefined;
+        page: number;
+        limit: number;
+        sortBy: string | undefined;
+        sortOrder: string | undefined;
+        skip: number;
+    }) => Promise<{
+        meta: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPage: number;
+        };
+        data: {
+            status: import("../../generated/enums").OrderStatus;
             id: string;
             createdAt: Date;
-            updatedAt: Date;
-            email: string;
-            emailVerified: boolean;
-            name: string;
-            image: string | null;
-        };
-        items: ({
-            meal: {
+            total: number;
+            customer: {
+                role: import("../../generated/enums").Role;
+                phone: string | null;
+                status: string | null;
                 id: string;
                 createdAt: Date;
+                updatedAt: Date;
+                email: string;
+                emailVerified: boolean;
                 name: string;
                 image: string | null;
-                providerId: string;
-                description: string;
-                price: number;
-                categoryId: string;
             };
-        } & {
-            id: string;
-            price: number;
-            mealId: string;
-            orderId: string;
-            qty: number;
-        })[];
-    } & {
-        status: import("../../generated/enums").OrderStatus;
-        id: string;
-        createdAt: Date;
-        providerId: string;
-        address: string;
-        customerId: string;
-        total: number;
-    })[]>;
+            items: ({
+                meal: {
+                    name: string;
+                    price: number;
+                };
+            } & {
+                id: string;
+                price: number;
+                mealId: string;
+                orderId: string;
+                qty: number;
+            })[];
+        }[];
+    }>;
 };
 //# sourceMappingURL=admin.service.d.ts.map

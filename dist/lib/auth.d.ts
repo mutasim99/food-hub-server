@@ -54,7 +54,9 @@ export declare const auth: import("better-auth").Auth<{
     };
     plugins: [{
         id: "oauth-proxy";
-        options: NoInfer<import("better-auth/plugins").OAuthProxyOptions>;
+        options: NoInfer<{
+            productionURL: string;
+        }>;
         endpoints: {
             oAuthProxy: import("better-call").StrictEndpoint<"/oauth-proxy-callback", {
                 method: "GET";

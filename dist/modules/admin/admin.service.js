@@ -62,17 +62,79 @@ const createCategory = async (name, image) => {
     });
 };
 /* Orders */
-const getAllOrders = async () => {
-    return prisma.order.findMany({
-        include: {
-            customer: true,
-            items: {
-                include: {
-                    meal: true,
+const getAllOrders = async ({ search, page, limit, sortBy, sortOrder, skip, }) => {
+    const andCondition = [];
+    if (search) {
+        andCondition.push({
+            OR: [
+                {
+                    items: {
+                        some: {
+                            meal: {
+                                name: {
+                                    contains: search,
+                                    mode: "insensitive",
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    customer: {
+                        email: {
+                            contains: search,
+                            mode: "insensitive",
+                        },
+                    },
+                },
+            ],
+        });
+    }
+    const whereCondition = {
+        AND: andCondition,
+    };
+    const result = await prisma.$transaction(async (tx) => {
+        const data = await tx.order.findMany({
+            select: {
+                id: true,
+                customer: true,
+                total: true,
+                status: true,
+                createdAt: true,
+                items: {
+                    include: {
+                        meal: {
+                            select: {
+                                name: true,
+                                price: true,
+                            },
+                        },
+                    },
                 },
             },
-        },
+            where: whereCondition,
+            skip,
+            take: limit,
+            orderBy: sortBy && sortOrder
+                ? {
+                    [sortBy]: sortOrder,
+                }
+                : { createdAt: "desc" },
+        });
+        const total = await tx.order.count({
+            where: whereCondition,
+        });
+        return { data, total };
     });
+    return {
+        meta: {
+            page,
+            limit,
+            total: result.total,
+            totalPage: Math.ceil(result.total / limit),
+        },
+        data: result.data
+    };
 };
 export const adminServices = {
     getAllUsers,

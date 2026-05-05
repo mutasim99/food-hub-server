@@ -69,11 +69,22 @@ const createCategory = async (req, res) => {
 /* Orders */
 const getAllOrders = async (req, res) => {
     try {
-        const result = await adminServices.getAllOrders();
+        const { search } = req.query;
+        const searchString = typeof search === "string" ? search : undefined;
+        const { page, limit, sortBy, sortOrder, skip } = paginationAndSortingHelper(req.query);
+        const result = await adminServices.getAllOrders({
+            search: searchString,
+            page,
+            limit,
+            sortBy,
+            sortOrder,
+            skip,
+        });
         res.status(200).json({
             success: true,
             message: "Successfully retrieved all Orders",
-            data: result,
+            data: result.data,
+            meta: result.meta,
         });
     }
     catch (error) {

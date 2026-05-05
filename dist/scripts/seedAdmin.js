@@ -16,11 +16,11 @@ const seedAdmin = async () => {
         if (existingUser) {
             throw new Error("Admin is already exists");
         }
-        const signUpAdmin = await fetch("http://localhost:5000/api/auth/sign-up/email", {
+        const signUpAdmin = await fetch("https://food-hub-server-two.vercel.app/api/auth/sign-up/email", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                origin: "http://localhost:5000",
+                origin: "https://food-hub-server-two.vercel.app",
             },
             body: JSON.stringify(adminData),
         });

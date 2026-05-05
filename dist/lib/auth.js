@@ -10,7 +10,10 @@ export const auth = betterAuth({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
         ? process.env.NEXT_PUBLIC_BACKEND_URL
         : "https://food-hub-server-two.vercel.app",
-    trustedOrigins: [process.env.APP_URL],
+    trustedOrigins: [
+        process.env.APP_URL,
+        "https://foodhub-client-indol.vercel.app",
+    ],
     session: {
         cookieCache: {
             enabled: true,
@@ -53,6 +56,10 @@ export const auth = betterAuth({
             },
         },
     },
-    plugins: [oAuthProxy()],
+    plugins: [
+        oAuthProxy({
+            productionURL: "https://foodhub-client-indol.vercel.app",
+        }),
+    ],
 });
 //# sourceMappingURL=auth.js.map
