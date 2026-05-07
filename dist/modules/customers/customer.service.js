@@ -109,6 +109,9 @@ const getMyOrder = async (userId) => {
                 },
             },
         },
+        orderBy: {
+            createdAt: "desc",
+        },
     });
 };
 const createReview = async (userId, mealId, rating, comment) => {

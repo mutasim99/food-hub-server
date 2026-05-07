@@ -126,6 +126,9 @@ const getMyOrder = async (userId: string) => {
         },
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 };
 

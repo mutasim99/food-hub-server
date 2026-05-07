@@ -28,7 +28,7 @@ model ProviderProfile {
   address  String
   phone    String
   image    String
-  user     User    @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Meal     Meal[]
   Order    Order[]
 }
@@ -47,9 +47,9 @@ model Meal {
   price       Float
   image       String?
   providerId  String
-  provider    ProviderProfile @relation(fields: [providerId], references: [id])
+  provider    ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categoryId  String
-  category    Category        @relation(fields: [categoryId], references: [id])
+  category    Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt   DateTime        @default(now())
   OrderItem   OrderItem[]
   review      Review[]
@@ -59,7 +59,7 @@ model Meal {
 model Cart {
   id         String     @id @default(uuid())
   customerId String     @unique
-  customer   User       @relation(fields: [customerId], references: [id])
+  customer   User       @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   items      CartItem[]
@@ -68,9 +68,9 @@ model Cart {
 model CartItem {
   id     String @id @default(uuid())
   cartId String
-  cart   Cart   @relation(fields: [cartId], references: [id])
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   mealId String
-  meal   Meal   @relation(fields: [mealId], references: [id])
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   qty    Int
   price  Float
 
@@ -84,10 +84,10 @@ model Order {
   status     OrderStatus     @default(PLACED)
   address    String
   total      Float
-  customer   User            @relation(fields: [customerId], references: [id])
+  customer   User            @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt  DateTime        @default(now())
   items      OrderItem[]
-  provider   ProviderProfile @relation(fields: [providerId], references: [id])
+  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model OrderItem {
@@ -96,8 +96,8 @@ model OrderItem {
   mealId  String
   qty     Int
   price   Float
-  order   Order  @relation(fields: [orderId], references: [id])
-  meal    Meal   @relation(fields: [mealId], references: [id])
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  meal    Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Review {
@@ -106,8 +106,8 @@ model Review {
   comment   String
   userId    String
   mealId    String
-  meal      Meal     @relation(fields: [mealId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -143,7 +143,7 @@ model Session {
   ipAddress String?
   userAgent String?
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -155,7 +155,7 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?

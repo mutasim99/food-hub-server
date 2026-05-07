@@ -106,6 +106,8 @@ const deleteMeal = async (mealId: string, userId: string) => {
     throw new Error("You are not able to delete this meal");
   }
 
+  console.log("provider", provider.id, "mealProvider", meal.providerId);
+
   return await prisma.meal.delete({
     where: {
       id: mealId,
