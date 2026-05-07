@@ -170,16 +170,30 @@ const getAllOrders = async ({
     const total = await tx.order.count({
       where: whereCondition,
     });
-    return { data, total };
+
+    const users = await tx.order.groupBy({
+      by: ["customerId"],
+      where: whereCondition,
+    });
+
+    const completeCount = await tx.order.count({
+      where: {
+        ...whereCondition,
+        status: "DELIVERED",
+      },
+    });
+    return { data, total, totalUsers: users.length, completeCount };
   });
   return {
     meta: {
+      totalUsers : result.totalUsers,
+      completeCount : result.completeCount,
       page,
       limit,
       total: result.total,
-      totalPage : Math.ceil(result.total / limit),
+      totalPage: Math.ceil(result.total / limit),
     },
-    data:result.data
+    data: result.data,
   };
 };
 

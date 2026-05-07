@@ -56,6 +56,8 @@ export declare const adminServices: {
         skip: number;
     }) => Promise<{
         meta: {
+            totalUsers: number;
+            completeCount: number;
             page: number;
             limit: number;
             total: number;

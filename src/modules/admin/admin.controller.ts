@@ -57,7 +57,11 @@ const updateUser = async (req: Request, res: Response) => {
 /* Categories */
 const createCategory = async (req: Request, res: Response) => {
   try {
-    const { name, image } = req.body;
+    const { name } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ message: "Image is required" });
+    }
+    const image = req.file.path;
     const result = await adminServices.createCategory(name, image);
     res.status(201).json({
       success: true,

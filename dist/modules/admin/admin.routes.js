@@ -1,11 +1,12 @@
 import { Router } from "express";
 import auth, { UserRole } from "../../middleware/auth.middleware.js";
 import { adminController } from "./admin.controller.js";
+import { multerUpload } from "../../config/multer.config.js";
 const router = Router();
 /* Users */
 router.get("/users-admin", auth(UserRole.ADMIN), adminController.getAllUsers);
 /* Categories */
-router.post("/categories", auth(UserRole.ADMIN), adminController.createCategory);
+router.post("/categories", auth(UserRole.ADMIN), multerUpload.single("image"), adminController.createCategory);
 /* orders */
 router.get("/admin-order", auth(UserRole.ADMIN), adminController.getAllOrders);
 /* Update user */
