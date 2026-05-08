@@ -6,4 +6,11 @@ export interface ICreateMealPayload {
     image: string;
     providerId: string;
 }
+export interface IUpdateMealPayload {
+    name?: string;
+    price?: number;
+    description?: string;
+    categoryId?: string;
+    image?: string;
+}
 //# sourceMappingURL=provider.interface.d.ts.map

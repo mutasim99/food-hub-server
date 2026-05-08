@@ -10,7 +10,7 @@ router.get("/provider-orders", auth(UserRole.PROVIDER), providerController.getPr
 /* Add a Meal */
 router.post("/api/add-meals", auth(UserRole.PROVIDER), multerUpload.single("image"), providerController.addMeal);
 /* Update Meal */
-router.put("/api/meals/:id", auth(UserRole.PROVIDER), providerController.UpdateMeal);
+router.put("/api/meals/:id", auth(UserRole.PROVIDER), multerUpload.single("image"), providerController.UpdateMeal);
 /* Update order Status */
 router.patch("/provider-orders/:id/status", auth(UserRole.PROVIDER), providerController.updateOrderStatus);
 /* Delete Meal */

@@ -1,5 +1,5 @@
-import { Meal, OrderStatus } from "../../generated/client";
-import { ICreateMealPayload } from "./provider.interface";
+import { OrderStatus } from "../../generated/client";
+import { ICreateMealPayload, IUpdateMealPayload } from "./provider.interface";
 export declare const providerServices: {
     getMyMeals: (userId: string) => Promise<({
         category: {
@@ -27,7 +27,7 @@ export declare const providerServices: {
         price: number;
         categoryId: string;
     } | undefined>;
-    updateMeal: (mealId: string, userId: string, data: Meal) => Promise<{
+    updateMeal: (mealId: string, userId: string, data: Partial<IUpdateMealPayload>) => Promise<{
         id: string;
         createdAt: Date;
         name: string;

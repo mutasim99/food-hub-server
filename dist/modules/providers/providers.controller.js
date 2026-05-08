@@ -52,7 +52,13 @@ const UpdateMeal = async (req, res) => {
     try {
         const mealId = req.params.id;
         const userId = req.user?.id;
-        const data = req.body;
+        const data = {
+            ...req.body,
+            price: req.body.price ? parseFloat(req.body.price) : undefined,
+        };
+        if (req.file) {
+            data.image = req.file.path;
+        }
         const result = await providerServices.updateMeal(mealId, userId, data);
         res.status(201).json({
             success: true,

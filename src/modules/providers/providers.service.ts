@@ -1,7 +1,7 @@
 import { deleteFileFromCloudinary } from "../../config/cloudinary.config";
 import { Meal, OrderStatus } from "../../generated/client";
 import { prisma } from "../../lib/prisma";
-import { ICreateMealPayload } from "./provider.interface";
+import { ICreateMealPayload, IUpdateMealPayload } from "./provider.interface";
 
 const getProviderByUserId = async (userId: string) => {
   return prisma.providerProfile.findUnique({
@@ -51,7 +51,11 @@ const addMeal = async (userId: string, payload: ICreateMealPayload) => {
   }
 };
 
-const updateMeal = async (mealId: string, userId: string, data: Meal) => {
+const updateMeal = async (
+  mealId: string,
+  userId: string,
+  data: Partial<IUpdateMealPayload>
+) => {
   const provider = await getProviderByUserId(userId);
   if (!provider) {
     throw new Error("Provider profile not found");
@@ -71,12 +75,16 @@ const updateMeal = async (mealId: string, userId: string, data: Meal) => {
     throw new Error("You are not able to update this meal");
   }
 
+  if (data.image && meal.image) {
+    await deleteFileFromCloudinary(meal.image);
+  }
+
   const updateData = {
-    name: data.name,
-    description: data.description,
-    price: data.price,
-    image: data.image,
-    categoryId: data.categoryId,
+    ...(data.name !== undefined && { name: data.name }),
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.price !== undefined && { price: data.price }),
+    ...(data.image && { image: data.image }),
+    ...(data.categoryId && { categoryId: data.categoryId }),
   };
   return await prisma.meal.update({
     where: {

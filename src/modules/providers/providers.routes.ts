@@ -30,6 +30,7 @@ router.post(
 router.put(
   "/api/meals/:id",
   auth(UserRole.PROVIDER),
+  multerUpload.single("image"),
   providerController.UpdateMeal
 );
 /* Update order Status */

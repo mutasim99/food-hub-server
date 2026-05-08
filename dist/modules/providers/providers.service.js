@@ -62,12 +62,15 @@ const updateMeal = async (mealId, userId, data) => {
     if (meal.providerId !== provider.id) {
         throw new Error("You are not able to update this meal");
     }
+    if (data.image && meal.image) {
+        await deleteFileFromCloudinary(meal.image);
+    }
     const updateData = {
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        image: data.image,
-        categoryId: data.categoryId,
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.price !== undefined && { price: data.price }),
+        ...(data.image && { image: data.image }),
+        ...(data.categoryId && { categoryId: data.categoryId }),
     };
     return await prisma.meal.update({
         where: {
