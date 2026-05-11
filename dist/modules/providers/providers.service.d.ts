@@ -15,6 +15,7 @@ export declare const providerServices: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     })[]>;
     addMeal: (userId: string, payload: ICreateMealPayload) => Promise<{
@@ -25,6 +26,7 @@ export declare const providerServices: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     } | undefined>;
     updateMeal: (mealId: string, userId: string, data: Partial<IUpdateMealPayload>) => Promise<{
@@ -35,6 +37,7 @@ export declare const providerServices: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     }>;
     deleteMeal: (mealId: string, userId: string) => Promise<{
@@ -45,6 +48,7 @@ export declare const providerServices: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     }>;
     getProviderOrders: (userId: string) => Promise<({
@@ -56,6 +60,7 @@ export declare const providerServices: {
             meal: {
                 name: string;
                 image: string | null;
+                isDeleted: boolean;
             };
         } & {
             id: string;

@@ -18,6 +18,7 @@ export declare const publicService: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     })[]>;
     getPopularMeals: () => Promise<({
@@ -32,6 +33,7 @@ export declare const publicService: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     })[]>;
     getMealById: (mealId: string) => Promise<({
@@ -61,6 +63,7 @@ export declare const publicService: {
         providerId: string;
         description: string;
         price: number;
+        isDeleted: boolean;
         categoryId: string;
     }) | null>;
     getAllCategories: () => Promise<{
@@ -110,6 +113,7 @@ export declare const publicService: {
             providerId: string;
             description: string;
             price: number;
+            isDeleted: boolean;
             categoryId: string;
         })[];
     } & {

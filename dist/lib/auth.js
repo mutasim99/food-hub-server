@@ -12,7 +12,7 @@ export const auth = betterAuth({
         : "https://food-hub-server-two.vercel.app",
     trustedOrigins: [
         process.env.APP_URL,
-        "https://foodhub-client-indol.vercel.app",
+        "https://foodhub-client-weld.vercel.app",
     ],
     session: {
         cookieCache: {
@@ -58,7 +58,7 @@ export const auth = betterAuth({
     },
     plugins: [
         oAuthProxy({
-            productionURL: "https://foodhub-client-indol.vercel.app",
+            productionURL: "https://foodhub-client-weld.vercel.app",
         }),
     ],
 });

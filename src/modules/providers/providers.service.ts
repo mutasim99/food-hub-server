@@ -19,6 +19,7 @@ const getMyMeals = async (userId: string) => {
   const meals = await prisma.meal.findMany({
     where: {
       providerId: provider.id,
+      isDeleted: false,
     },
     include: {
       category: true,
@@ -116,9 +117,12 @@ const deleteMeal = async (mealId: string, userId: string) => {
 
   console.log("provider", provider.id, "mealProvider", meal.providerId);
 
-  return await prisma.meal.delete({
+  return await prisma.meal.update({
     where: {
       id: mealId,
+    },
+    data: {
+      isDeleted: true,
     },
   });
 };
@@ -145,6 +149,7 @@ const getProviderOrders = async (userId: string) => {
             select: {
               name: true,
               image: true,
+              isDeleted: true,
             },
           },
         },

@@ -15,6 +15,7 @@ const getMyMeals = async (userId) => {
     const meals = await prisma.meal.findMany({
         where: {
             providerId: provider.id,
+            isDeleted: false,
         },
         include: {
             category: true,
@@ -96,9 +97,12 @@ const deleteMeal = async (mealId, userId) => {
         throw new Error("You are not able to delete this meal");
     }
     console.log("provider", provider.id, "mealProvider", meal.providerId);
-    return await prisma.meal.delete({
+    return await prisma.meal.update({
         where: {
             id: mealId,
+        },
+        data: {
+            isDeleted: true,
         },
     });
 };
@@ -124,6 +128,7 @@ const getProviderOrders = async (userId) => {
                         select: {
                             name: true,
                             image: true,
+                            isDeleted: true,
                         },
                     },
                 },

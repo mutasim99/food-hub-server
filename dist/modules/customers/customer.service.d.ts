@@ -21,6 +21,7 @@ export declare const getCart: (customerId: string) => Promise<({
             providerId: string;
             description: string;
             price: number;
+            isDeleted: boolean;
             categoryId: string;
         };
     } & {
@@ -132,6 +133,7 @@ export declare const customerServices: {
                 providerId: string;
                 description: string;
                 price: number;
+                isDeleted: boolean;
                 categoryId: string;
             };
         } & {
@@ -157,7 +159,7 @@ export declare const customerServices: {
         image: string;
         shopName: string;
         address: string;
-    } | undefined>;
+    }>;
     addToCart: (customerId: string, mealId: string, qty: number) => Promise<{
         id: string;
         price: number;
@@ -175,6 +177,7 @@ export declare const customerServices: {
                 providerId: string;
                 description: string;
                 price: number;
+                isDeleted: boolean;
                 categoryId: string;
             };
         } & {

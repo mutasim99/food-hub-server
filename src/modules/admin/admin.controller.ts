@@ -1,8 +1,24 @@
-//*Users
-
 import { Request, Response } from "express";
 import { adminServices } from "./admin.service";
 import paginationAndSortingHelper from "../../helpers/paginationAndSortingHelper";
+
+const getAdminStats = async (req: Request, res: Response) => {
+  try {
+    const result = await adminServices.getAdminStats();
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved",
+      data: result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+    });
+  }
+};
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -22,7 +38,8 @@ const getAllUsers = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Successfully retrieved all users",
-      data: users,
+      data: users.data,
+      meta: users.meta,
     });
   } catch (error) {
     const errorMessage =
@@ -111,6 +128,7 @@ const getAllOrders = async (req: Request, res: Response) => {
 };
 
 export const adminController = {
+  getAdminStats,
   getAllUsers,
   updateUser,
   createCategory,

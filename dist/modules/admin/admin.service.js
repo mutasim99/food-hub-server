@@ -1,4 +1,29 @@
 import { prisma } from "../../lib/prisma.js";
+const getAdminStats = async () => {
+    return prisma.$transaction(async (tx) => {
+        const [total, customers, providers, categories, orders, totalUsers] = await Promise.all([
+            tx.user.count(),
+            tx.user.count({
+                where: {
+                    role: "CUSTOMER",
+                },
+            }),
+            tx.user.count({
+                where: {
+                    role: "PROVIDER",
+                },
+            }),
+            tx.category.count(),
+            tx.order.count(),
+            tx.user.findMany({
+                orderBy: {
+                    createdAt: "desc",
+                },
+            }),
+        ]);
+        return { total, customers, providers, categories, orders, totalUsers };
+    });
+};
 const getAllUsers = async ({ search, page, limit, sortBy, sortOrder, skip, }) => {
     const andCondition = [];
     if (search) {
@@ -19,20 +44,29 @@ const getAllUsers = async ({ search, page, limit, sortBy, sortOrder, skip, }) =>
             ],
         });
     }
-    return prisma.user.findMany({
-        take: limit,
-        skip,
-        where: {
-            AND: andCondition,
-        },
-        include: {
-            ProviderProfile: true,
-        },
-        orderBy: sortBy && sortOrder
-            ? {
-                [sortBy]: sortOrder,
-            }
-            : { createdAt: "desc" },
+    const where = { AND: andCondition };
+    return await prisma.$transaction(async (tx) => {
+        const total = await tx.user.count({ where });
+        const user = await tx.user.findMany({
+            take: limit,
+            skip,
+            where,
+            include: { ProviderProfile: true },
+            orderBy: sortBy && sortOrder
+                ? {
+                    [sortBy]: sortOrder,
+                }
+                : { createdAt: "desc" },
+        });
+        return {
+            data: user,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPage: Math.ceil(total / limit),
+            },
+        };
     });
 };
 const updateUser = async (userId, data) => {
@@ -149,6 +183,7 @@ const getAllOrders = async ({ search, page, limit, sortBy, sortOrder, skip, }) =
     };
 };
 export const adminServices = {
+    getAdminStats,
     getAllUsers,
     updateUser,
     createCategory,

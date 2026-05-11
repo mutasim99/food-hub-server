@@ -272,9 +272,10 @@ const createProviderProfile = async (userId: string, data: any) => {
       });
       return providerProfile;
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log("error", error);
     await deleteFileFromCloudinary(uploadImageUrl);
+    throw error;
   }
 };
 

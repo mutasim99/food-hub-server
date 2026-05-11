@@ -238,6 +238,7 @@ const createProviderProfile = async (userId, data) => {
     catch (error) {
         console.log("error", error);
         await deleteFileFromCloudinary(uploadImageUrl);
+        throw error;
     }
 };
 export const getOrCreateCart = async (customerId) => {

@@ -451,9 +451,6 @@ export type UserUpdateOneRequiredWithoutReviewNestedInput = {
     connect?: Prisma.UserWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewInput, Prisma.UserUpdateWithoutReviewInput>, Prisma.UserUncheckedUpdateWithoutReviewInput>;
 };
-export type BoolFieldUpdateOperationsInput = {
-    set?: boolean;
-};
 export type EnumRoleFieldUpdateOperationsInput = {
     set?: $Enums.Role;
 };

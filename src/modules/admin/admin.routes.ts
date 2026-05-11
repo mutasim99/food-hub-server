@@ -4,7 +4,8 @@ import { adminController } from "./admin.controller";
 import { multerUpload } from "../../config/multer.config";
 
 const router = Router();
-
+/* Admin stats */
+router.get("/admin-stats", auth(UserRole.ADMIN), adminController.getAdminStats);
 /* Users */
 router.get("/users-admin", auth(UserRole.ADMIN), adminController.getAllUsers);
 /* Categories */

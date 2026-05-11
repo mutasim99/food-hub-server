@@ -1,4 +1,5 @@
 import { customerServices } from "./customer.service.js";
+import AppError from "../../errorHelper/AppError.js";
 const createOrder = async (req, res) => {
     try {
         const { address, items } = req.body;
@@ -138,10 +139,15 @@ const createProviderProfile = async (req, res) => {
         });
     }
     catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Something went wrong!";
+        if (error instanceof AppError) {
+            return res.status(error.StatusCode).json({
+                success: false,
+                message: error.message,
+            });
+        }
         return res.status(500).json({
             success: false,
-            error: errorMessage,
+            message: "Something went wrong",
         });
     }
 };

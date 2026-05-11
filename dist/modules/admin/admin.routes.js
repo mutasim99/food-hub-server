@@ -3,6 +3,8 @@ import auth, { UserRole } from "../../middleware/auth.middleware.js";
 import { adminController } from "./admin.controller.js";
 import { multerUpload } from "../../config/multer.config.js";
 const router = Router();
+/* Admin stats */
+router.get("/admin-stats", auth(UserRole.ADMIN), adminController.getAdminStats);
 /* Users */
 router.get("/users-admin", auth(UserRole.ADMIN), adminController.getAllUsers);
 /* Categories */

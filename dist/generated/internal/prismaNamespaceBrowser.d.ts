@@ -69,6 +69,7 @@ export declare const MealScalarFieldEnum: {
     readonly price: "price";
     readonly image: "image";
     readonly providerId: "providerId";
+    readonly isDeleted: "isDeleted";
     readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";
 };

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { customerServices } from "./customer.service";
+import AppError from "../../errorHelper/AppError";
+import { success } from "zod";
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -149,18 +151,22 @@ const createProviderProfile = async (req: Request, res: Response) => {
       userId as string,
       payload
     );
-       
+
     return res.status(201).json({
       success: true,
       message: "Profile created successfully",
       data: result,
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Something went wrong!";
+    if (error instanceof AppError) {
+      return res.status(error.StatusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     return res.status(500).json({
       success: false,
-      error: errorMessage,
+      message: "Something went wrong",
     });
   }
 };

@@ -1,4 +1,23 @@
 export declare const adminServices: {
+    getAdminStats: () => Promise<{
+        total: number;
+        customers: number;
+        providers: number;
+        categories: number;
+        orders: number;
+        totalUsers: {
+            role: import("../../generated/enums").Role;
+            phone: string | null;
+            status: string | null;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            email: string;
+            emailVerified: boolean;
+            name: string;
+            image: string | null;
+        }[];
+    }>;
     getAllUsers: ({ search, page, limit, sortBy, sortOrder, skip, }: {
         search: string | undefined;
         page: number;
@@ -6,27 +25,35 @@ export declare const adminServices: {
         sortBy: string | undefined;
         sortOrder: string | undefined;
         skip: number;
-    }) => Promise<({
-        ProviderProfile: {
-            phone: string;
+    }) => Promise<{
+        data: ({
+            ProviderProfile: {
+                phone: string;
+                id: string;
+                userId: string;
+                image: string;
+                shopName: string;
+                address: string;
+            } | null;
+        } & {
+            role: import("../../generated/enums").Role;
+            phone: string | null;
+            status: string | null;
             id: string;
-            userId: string;
-            image: string;
-            shopName: string;
-            address: string;
-        } | null;
-    } & {
-        role: import("../../generated/enums").Role;
-        phone: string | null;
-        status: string | null;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        email: string;
-        emailVerified: boolean;
-        name: string;
-        image: string | null;
-    })[]>;
+            createdAt: Date;
+            updatedAt: Date;
+            email: string;
+            emailVerified: boolean;
+            name: string;
+            image: string | null;
+        })[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPage: number;
+        };
+    }>;
     updateUser: (userId: string, data: {
         role?: "ADMIN" | "PROVIDER" | "CUSTOMER";
         status?: "ACTIVE" | "INACTIVE";
